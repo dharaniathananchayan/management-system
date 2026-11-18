@@ -89,8 +89,8 @@
           </div>
         </div>
 
-        <!-- Right: Student Persona Selector -->
-        <div class="flex items-center space-x-3 sm:space-x-4">
+        <!-- Right: Student Persona Selector & Register Action -->
+        <div class="flex items-center space-x-2.5 sm:space-x-3">
           
           <!-- Persona Switcher -->
           <div class="flex items-center bg-slate-800/80 border border-slate-700/80 rounded-xl px-2.5 py-1.5 shadow-inner">
@@ -103,6 +103,11 @@
               <option value="4" class="bg-slate-800 text-white">Inactive Student (ID: 4)</option>
             </select>
           </div>
+
+          <!-- Register Student Quick Button -->
+          <button onclick="openRegisterStudentModal()" class="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition flex items-center space-x-1" title="Register a new student profile">
+            <span>+ New Student</span>
+          </button>
 
         </div>
 
@@ -168,13 +173,15 @@
               You're making great progress in <span class="text-blue-300 font-semibold">Python Fundamentals</span>. Complete your next lesson to maintain your pace!
             </p>
           </div>
-          <div class="flex items-center space-x-3">
-            <button onclick="switchTab('tab-quiz')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold shadow-lg shadow-blue-500/25 transition duration-200 flex items-center space-x-2">
-              <span>Take Quiz</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button onclick="openProgressReportModal()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold backdrop-blur-xs transition border border-white/20 flex items-center space-x-1.5" title="Generate individual student progress report">
+              <span>📊 Progress Report</span>
             </button>
-            <button onclick="switchTab('tab-courses')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-xs transition border border-white/10">
-              Browse Courses
+            <button onclick="openEditProfileModal()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-xs transition border border-white/10 flex items-center space-x-1.5" title="Update student profile details">
+              <span>👤 Edit Profile</span>
+            </button>
+            <button onclick="switchTab('tab-quiz')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold shadow-lg shadow-blue-500/25 transition duration-200 flex items-center space-x-1.5">
+              <span>Take Quiz →</span>
             </button>
           </div>
         </div>
@@ -414,8 +421,11 @@
             </div>
           </div>
 
-          <!-- Timer & Switcher -->
-          <div class="flex items-center space-x-3">
+          <!-- Timer, Creator & Switcher -->
+          <div class="flex items-center space-x-2.5">
+            <button onclick="openCreateAssessmentModal()" class="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition flex items-center space-x-1" title="Author a new quiz or assessment">
+              <span>+ Create Assessment</span>
+            </button>
             <div class="flex items-center space-x-2 bg-slate-800/90 border border-slate-700 px-3.5 py-1.5 rounded-xl font-mono text-xs shadow-inner">
               <span class="text-amber-400 animate-pulse">⏱</span>
               <span class="text-slate-400">Time Left:</span>
@@ -544,16 +554,20 @@
       <!-- Difficult Topics & Inactive Students Panel -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Difficult Topics -->
+        <!-- Difficult Topics with Course-wise Filter -->
         <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              <h3 class="text-sm font-bold text-slate-900">Identified Difficult Topics (Low Accuracy)</h3>
+              <h3 class="text-sm font-bold text-slate-900">Identified Difficult Topics</h3>
             </div>
-            <span class="text-[11px] text-slate-400">Accuracy &lt; 60%</span>
+            <select id="analytics-course-filter" onchange="loadCourseDifficultTopics(this.value)" class="text-xs border border-slate-200 rounded-lg px-2.5 py-1 bg-white font-medium text-slate-700 focus:outline-blue-500">
+              <option value="1">Course 1: Python Fundamentals</option>
+              <option value="2">Course 2: Web API Development</option>
+              <option value="3">Course 3: SQL & Database Design</option>
+            </select>
           </div>
-          <p class="text-xs text-slate-500 mb-4">Students exhibit high error rates in these key competency areas:</p>
+          <p class="text-xs text-slate-500 mb-4">Course-wise competency areas with accuracy &lt; 60%:</p>
           <div id="difficult-topics-container" class="space-y-3">
             <!-- Populated via API -->
           </div>
@@ -574,6 +588,37 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Low Performing Students Section (Average Score < 60%) -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Students with Low Assessment Scores (&lt; 60%)</h3>
+              <p class="text-xs text-slate-500">Real-time intervention list for tutoring and remediation.</p>
+            </div>
+          </div>
+          <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200" id="low-performers-badge">0 Flagged</span>
+        </div>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-100 text-slate-400 uppercase font-semibold text-[10px]">
+                <th class="py-2.5 px-3">Student Name</th>
+                <th class="py-2.5 px-3">Email</th>
+                <th class="py-2.5 px-3">Average Score</th>
+                <th class="py-2.5 px-3">Assessments Taken</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3 text-right">Intervention</th>
+              </tr>
+            </thead>
+            <tbody id="low-performers-tbody" class="divide-y divide-slate-100">
+              <!-- Populated via API -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </section>
@@ -781,20 +826,257 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL: Course Curriculum Breakdown                                    -->
+  <!-- MODAL: Course Curriculum Breakdown & Module/Lesson Management         -->
   <!-- ===================================================================== -->
   <div id="curriculum-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-slate-100 max-h-[85vh] flex flex-col">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-slate-100 max-h-[88vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-3">
         <div>
           <h3 class="text-base font-bold text-slate-900" id="curriculum-course-title">Course Curriculum</h3>
           <p class="text-xs text-slate-500" id="curriculum-course-desc">Modules and lessons breakdown</p>
         </div>
         <button onclick="document.getElementById('curriculum-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
       </div>
+
+      <!-- Quick Action Bar -->
+      <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+        <span class="text-xs font-semibold text-slate-600">Curriculum Units & Learning Materials</span>
+        <button type="button" onclick="toggleCurriculumAddForm()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-lg border border-blue-200 transition flex items-center space-x-1">
+          <span>+ Add Unit / Lesson</span>
+        </button>
+      </div>
+
+      <!-- Expandable Add Module & Lesson Form -->
+      <div id="curriculum-add-box" class="hidden p-4 bg-slate-50 border border-slate-200 rounded-xl mb-4 space-y-3">
+        <span class="text-xs font-bold text-slate-800 block">Create Unit & Lesson</span>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div class="sm:col-span-1">
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Module Name</label>
+            <input type="text" id="add-module-name" placeholder="e.g. Unit 3: Advanced Topics" class="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-blue-500">
+          </div>
+          <div class="sm:col-span-1">
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Lesson Title</label>
+            <input type="text" id="add-lesson-title" placeholder="e.g. Lesson 3.1: Deep Dive" class="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-blue-500">
+          </div>
+          <div class="sm:col-span-1">
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Duration (Mins)</label>
+            <input type="number" id="add-lesson-duration" value="20" min="5" max="240" class="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-blue-500 font-mono">
+          </div>
+        </div>
+        <div class="flex justify-end space-x-2 pt-1">
+          <button type="button" onclick="toggleCurriculumAddForm()" class="px-3 py-1 text-xs text-slate-500 hover:text-slate-700">Cancel</button>
+          <button type="button" onclick="submitAddModuleLesson()" class="px-3.5 py-1 text-xs font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-xs transition">Add to Curriculum</button>
+        </div>
+      </div>
+
+      <!-- Modules & Lessons Content -->
       <div id="curriculum-content" class="overflow-y-auto flex-1 space-y-4 pr-1">
         <!-- Filled dynamically -->
       </div>
+
+      <!-- Footer Actions -->
+      <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100">
+        <button type="button" onclick="handleDeleteCurrentCourse()" class="px-3.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-center space-x-1">
+          <span>🗑 Delete Course</span>
+        </button>
+        <button type="button" onclick="document.getElementById('curriculum-modal').classList.add('hidden')" class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: Register New Student                                           -->
+  <!-- ===================================================================== -->
+  <div id="register-student-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">🎓</span>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Register New Student</h3>
+            <p class="text-xs text-slate-500">Create profile and enroll into the platform</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('register-student-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="register-student-form" onsubmit="handleRegisterStudent(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Full Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="reg-student-name" required placeholder="e.g. Maya Lin" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-medium">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+            <input type="email" id="reg-student-email" required placeholder="maya.lin@archintx.org" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Password <span class="text-rose-500">*</span></label>
+            <input type="password" id="reg-student-password" required minlength="6" placeholder="••••••••" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-mono">
+            <span class="text-[10px] text-slate-400 mt-1 block">Secured with bcrypt password hashing.</span>
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" onclick="document.getElementById('register-student-modal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition">Register Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: Edit Student Profile                                           -->
+  <!-- ===================================================================== -->
+  <div id="edit-profile-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">👤</span>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Edit Learner Profile</h3>
+            <p class="text-xs text-slate-500">Update personal account and contact credentials</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('edit-profile-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="edit-profile-form" onsubmit="handleEditProfile(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Learner Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="edit-profile-name" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-medium">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+            <input type="email" id="edit-profile-email" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" onclick="document.getElementById('edit-profile-modal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-md shadow-purple-500/20 transition">Save Profile Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: Individual Student Progress Report                             -->
+  <!-- ===================================================================== -->
+  <div id="progress-report-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 sm:p-8 border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-base">📊</div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Individual Student Progress Report</h3>
+            <p class="text-xs text-slate-500">Official competency transcript and learning performance summary</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button type="button" onclick="window.print()" class="px-3 py-1 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition flex items-center space-x-1">
+            <span>🖨 Print / PDF</span>
+          </button>
+          <button onclick="document.getElementById('progress-report-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+        </div>
+      </div>
+
+      <!-- Report Content Card -->
+      <div id="report-content" class="space-y-6">
+        <!-- Filled dynamically -->
+      </div>
+
+      <div class="flex justify-end pt-5 mt-6 border-t border-slate-100">
+        <button type="button" onclick="document.getElementById('progress-report-modal').classList.add('hidden')" class="px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+          Close Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: Create New Assessment & Questions                              -->
+  <!-- ===================================================================== -->
+  <div id="create-assessment-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-7 border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-base">📝</div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Author New Quiz / Assessment</h3>
+            <p class="text-xs text-slate-500">Configure quiz specifications and starter questions</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('create-assessment-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="create-assessment-form" onsubmit="handleCreateAssessment(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Target Curriculum Module <span class="text-rose-500">*</span></label>
+            <select id="new-assessment-module" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Assessment Title <span class="text-rose-500">*</span></label>
+            <input type="text" id="new-assessment-title" required placeholder="e.g. FastAPI Routing & Dependencies Evaluation" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600 font-medium">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Time Limit (Minutes)</label>
+              <input type="number" id="new-assessment-duration" value="15" min="2" max="180" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Passing Score (%)</label>
+              <input type="number" id="new-assessment-passing" value="60" min="40" max="100" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600 font-mono">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Description & Scope</label>
+            <textarea id="new-assessment-desc" rows="2" placeholder="Evaluation on routing decorators, response models, and status codes." class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600"></textarea>
+          </div>
+
+          <!-- Starter Question Section -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+            <span class="text-xs font-bold text-slate-800 block">⚡ Initial Evaluation Question</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Topic Tag</label>
+                <input type="text" id="new-assessment-q-topic" value="Routing" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-indigo-500">
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Question Type</label>
+                <select id="new-assessment-q-type" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-indigo-500">
+                  <option value="mcq">Multiple Choice</option>
+                  <option value="true_false">True / False</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Question Text</label>
+              <input type="text" id="new-assessment-q-text" required placeholder="Which decorator defines a GET endpoint in FastAPI?" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-indigo-500 font-medium">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Options (comma-separated)</label>
+              <input type="text" id="new-assessment-q-options" value="@app.get(), @app.post(), @app.route_get(), @app.read()" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-indigo-500">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Correct Answer (Exact Match)</label>
+              <input type="text" id="new-assessment-q-correct" value="@app.get()" required class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-indigo-500 font-semibold text-emerald-700">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" onclick="document.getElementById('create-assessment-modal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/20 transition">Create Assessment</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1249,7 +1531,10 @@
       }
     }
 
+    let currentCurriculumCourseId = null;
+
     async function viewCourseDetails(courseId) {
+      currentCurriculumCourseId = courseId;
       const res = await fetch(`/courses/${courseId}`);
       if (!res.ok) return;
       const course = await res.json();
@@ -1261,15 +1546,23 @@
       content.innerHTML = '';
 
       if (course.modules.length === 0) {
-        content.innerHTML = '<p class="text-xs text-slate-400 py-4">No modules published in this course yet.</p>';
+        content.innerHTML = '<p class="text-xs text-slate-400 py-4">No modules published in this course yet. Use "+ Add Unit / Lesson" above to populate learning materials.</p>';
       } else {
         course.modules.forEach(m => {
           let lessonsList = '';
           (m.lessons || []).forEach(l => {
             lessonsList += `
-              <li class="flex items-center justify-between text-xs py-1.5 px-3 bg-white rounded-lg border border-slate-100">
-                <span class="font-medium text-slate-800">${l.lesson_title}</span>
-                <span class="text-slate-400 font-mono text-[10px]">${l.duration_minutes}m</span>
+              <li class="flex items-center justify-between text-xs py-2 px-3 bg-white rounded-lg border border-slate-100 hover:border-slate-200 transition">
+                <div class="flex items-center space-x-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  <span class="font-medium text-slate-800">${l.lesson_title}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-slate-400 font-mono text-[10px]">${l.duration_minutes}m</span>
+                  <button type="button" onclick="toggleLessonInCurriculum(${l.lesson_id}, ${courseId})" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition">
+                    Toggle Complete
+                  </button>
+                </div>
               </li>
             `;
           });
@@ -1289,6 +1582,90 @@
       }
 
       document.getElementById('curriculum-modal').classList.remove('hidden');
+    }
+
+    function toggleCurriculumAddForm() {
+      const box = document.getElementById('curriculum-add-box');
+      box.classList.toggle('hidden');
+    }
+
+    async function submitAddModuleLesson() {
+      if (!currentCurriculumCourseId) return;
+      const modName = document.getElementById('add-module-name').value.trim();
+      const lesTitle = document.getElementById('add-lesson-title').value.trim();
+      const duration = parseInt(document.getElementById('add-lesson-duration').value) || 20;
+
+      if (!modName) {
+        alert('Please enter a module name.');
+        return;
+      }
+
+      // 1. Create module
+      const modRes = await fetch(`/courses/${currentCurriculumCourseId}/modules`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({module_name: modName, order_index: 1})
+      });
+      if (!modRes.ok) {
+        alert('Failed to add module.');
+        return;
+      }
+      const createdMod = await modRes.json();
+
+      // 2. If lesson title provided, create lesson
+      if (lesTitle) {
+        await fetch(`/modules/${createdMod.module_id}/lessons`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            lesson_title: lesTitle,
+            content: `Comprehensive learning materials for ${lesTitle}.`,
+            duration_minutes: duration,
+            order_index: 1
+          })
+        });
+      }
+
+      document.getElementById('add-module-name').value = '';
+      document.getElementById('add-lesson-title').value = '';
+      document.getElementById('curriculum-add-box').classList.add('hidden');
+      showToast('Module & lesson added to curriculum!');
+      viewCourseDetails(currentCurriculumCourseId);
+      loadCourses();
+    }
+
+    async function handleDeleteCurrentCourse() {
+      if (!currentCurriculumCourseId) return;
+      if (!confirm(`Are you sure you want to permanently delete Course #${currentCurriculumCourseId} and its learning materials?`)) return;
+      const res = await fetch(`/courses/${currentCurriculumCourseId}`, {method: 'DELETE'});
+      if (res.status === 204 || res.ok) {
+        document.getElementById('curriculum-modal').classList.add('hidden');
+        showToast(`Course #${currentCurriculumCourseId} deleted successfully.`, '🗑');
+        loadCourses();
+        loadEnrollmentsLedger();
+        loadStudentDashboard(activeStudentId);
+      }
+    }
+
+    async function toggleLessonProgress(lessonId) {
+      try {
+        const res = await fetch(`/progress/lessons/${lessonId}`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({student_id: activeStudentId, status: 'completed'})
+        });
+        if (res.ok) {
+          showToast('Lesson completion updated!', '✓');
+          loadStudentDashboard(activeStudentId);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function toggleLessonInCurriculum(lessonId, courseId) {
+      await toggleLessonProgress(lessonId);
+      viewCourseDetails(courseId);
     }
 
     // ==========================================
@@ -1317,6 +1694,86 @@
       } catch (err) {
         console.error('Error loading assessments:', err);
       }
+    }
+
+    async function openCreateAssessmentModal() {
+      const modSelect = document.getElementById('new-assessment-module');
+      modSelect.innerHTML = '';
+      
+      const res = await fetch('/courses');
+      if (res.ok) {
+        const courses = await res.json();
+        for (const c of courses) {
+          const cRes = await fetch(`/courses/${c.course_id}`);
+          if (cRes.ok) {
+            const fullC = await cRes.json();
+            (fullC.modules || []).forEach(m => {
+              modSelect.insertAdjacentHTML('beforeend', `
+                <option value="${m.module_id}">[Course #${c.course_id}] ${c.course_name} → ${m.module_name}</option>
+              `);
+            });
+          }
+        }
+      }
+
+      document.getElementById('create-assessment-modal').classList.remove('hidden');
+    }
+
+    async function handleCreateAssessment(e) {
+      e.preventDefault();
+      const moduleId = parseInt(document.getElementById('new-assessment-module').value);
+      const title = document.getElementById('new-assessment-title').value.trim();
+      const desc = document.getElementById('new-assessment-desc').value.trim();
+      const duration = parseInt(document.getElementById('new-assessment-duration').value) || 15;
+      const passing = parseInt(document.getElementById('new-assessment-passing').value) || 60;
+
+      const qText = document.getElementById('new-assessment-q-text').value.trim();
+      const qTopic = document.getElementById('new-assessment-q-topic').value.trim() || 'General';
+      const qType = document.getElementById('new-assessment-q-type').value;
+      const qOptionsRaw = document.getElementById('new-assessment-q-options').value.trim();
+      const qCorrect = document.getElementById('new-assessment-q-correct').value.trim();
+
+      // 1. Create assessment
+      const aRes = await fetch('/assessments', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          module_id: moduleId,
+          title: title,
+          description: desc || null,
+          time_limit_minutes: duration,
+          passing_score: passing
+        })
+      });
+
+      if (!aRes.ok) {
+        const err = await aRes.json();
+        alert(err.detail || 'Failed to create assessment');
+        return;
+      }
+      const createdA = await aRes.json();
+
+      // 2. Add question
+      const optionsArr = qOptionsRaw.split(',').map(s => s.trim()).filter(Boolean);
+      await fetch(`/assessments/${createdA.assessment_id}/questions`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          question_text: qText,
+          question_type: qType,
+          options: optionsArr.length > 0 ? optionsArr : [qCorrect],
+          correct_answer: qCorrect,
+          points: 10,
+          topic: qTopic
+        })
+      });
+
+      document.getElementById('create-assessment-modal').classList.add('hidden');
+      document.getElementById('create-assessment-form').reset();
+      showToast(`Assessment "${createdA.title}" created successfully!`, '📝');
+      
+      await loadQuizData();
+      switchAssessment(createdA.assessment_id);
     }
 
     async function switchAssessment(assessmentId) {
@@ -1606,8 +2063,299 @@
           }
         }
 
+        // Load Low Performing Students Intervention List
+        await loadLowPerformingStudents();
+
       } catch (err) {
         console.error('Error loading analytics:', err);
+      }
+    }
+
+    async function loadCourseDifficultTopics(courseId) {
+      try {
+        const res = await fetch(`/analytics/course/${courseId}`);
+        if (!res.ok) return;
+        const cData = await res.json();
+        const topicCont = document.getElementById('difficult-topics-container');
+        topicCont.innerHTML = '';
+        const topics = cData.difficult_topics || [];
+        if (topics.length === 0) {
+          topicCont.innerHTML = '<p class="text-xs text-slate-400 py-3">No low-accuracy topics identified for this course.</p>';
+          return;
+        }
+        topics.slice(0, 5).forEach(t => {
+          const badgeClass = t.difficulty_level === 'Hard' ? 'text-rose-700 bg-rose-50 border-rose-200' : 'text-amber-700 bg-amber-50 border-amber-200';
+          topicCont.insertAdjacentHTML('beforeend', `
+            <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between text-xs">
+              <div>
+                <span class="font-bold text-slate-800">${t.topic}</span>
+                <div class="w-32 bg-slate-200 rounded-full h-1.5 mt-1.5 overflow-hidden">
+                  <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${t.accuracy_percentage}%"></div>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="px-2.5 py-0.5 rounded-full border ${badgeClass} font-bold text-[10px]">${t.difficulty_level}</span>
+                <span class="block text-[10px] text-slate-500 mt-1 font-mono">${t.accuracy_percentage}% Acc</span>
+              </div>
+            </div>
+          `);
+        });
+      } catch (err) {
+        console.error('Error loading course difficult topics:', err);
+      }
+    }
+
+    async function loadLowPerformingStudents() {
+      try {
+        const res = await fetch('/analytics/low-performers');
+        if (!res.ok) return;
+        const low = await res.json();
+        const tbody = document.getElementById('low-performers-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        document.getElementById('low-performers-badge').textContent = `${low.length} Flagged`;
+
+        if (low.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">All evaluated learners currently maintain passing score averages (≥ 60%).</td></tr>`;
+          return;
+        }
+
+        low.forEach(s => {
+          tbody.insertAdjacentHTML('beforeend', `
+            <tr class="hover:bg-slate-50/70 transition">
+              <td class="py-3 px-3 font-bold text-slate-900">${s.name} <span class="text-slate-400 font-mono text-[11px]">(#${s.student_id})</span></td>
+              <td class="py-3 px-3 text-slate-500">${s.email}</td>
+              <td class="py-3 px-3 font-mono font-bold text-rose-600">${s.average_score}%</td>
+              <td class="py-3 px-3 font-mono text-slate-700">${s.total_assessments_taken}</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">At Risk</span></td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="sendReminder('${s.name}')" class="text-blue-600 hover:text-blue-800 font-semibold hover:underline">Schedule Tutoring →</button>
+              </td>
+            </tr>
+          `);
+        });
+      } catch (err) {
+        console.error('Error loading low performers:', err);
+      }
+    }
+
+    // ==========================================
+    // 5. STUDENT REGISTRATION, PROFILE & REPORT
+    // ==========================================
+    async function loadStudentsList() {
+      try {
+        const res = await fetch('/students');
+        if (!res.ok) return;
+        const students = await res.json();
+        const select = document.getElementById('student-select');
+        select.innerHTML = '';
+        students.forEach(s => {
+          select.insertAdjacentHTML('beforeend', `
+            <option value="${s.student_id}" class="bg-slate-800 text-white" ${s.student_id === activeStudentId ? 'selected' : ''}>
+              ${s.name} (ID: ${s.student_id})
+            </option>
+          `);
+        });
+      } catch (err) {
+        console.error('Error loading students list:', err);
+      }
+    }
+
+    function openRegisterStudentModal() {
+      document.getElementById('register-student-form').reset();
+      document.getElementById('register-student-modal').classList.remove('hidden');
+    }
+
+    async function handleRegisterStudent(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-student-name').value.trim();
+      const email = document.getElementById('reg-student-email').value.trim();
+      const password = document.getElementById('reg-student-password').value;
+
+      try {
+        const res = await fetch('/students/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({name, email, password})
+        });
+
+        if (res.ok) {
+          const student = await res.json();
+          document.getElementById('register-student-modal').classList.add('hidden');
+          showToast(`Student ${student.name} registered successfully!`, '🎓');
+          
+          await loadStudentsList();
+          changeActiveStudent(student.student_id);
+        } else {
+          const err = await res.json();
+          alert(err.detail || 'Registration failed.');
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
+        alert('An error occurred during registration.');
+      }
+    }
+
+    async function openEditProfileModal() {
+      try {
+        const res = await fetch(`/students/${activeStudentId}`);
+        if (res.ok) {
+          const s = await res.json();
+          document.getElementById('edit-profile-name').value = s.name;
+          document.getElementById('edit-profile-email').value = s.email;
+          document.getElementById('edit-profile-modal').classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function handleEditProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById('edit-profile-name').value.trim();
+      const email = document.getElementById('edit-profile-email').value.trim();
+
+      try {
+        const res = await fetch(`/students/${activeStudentId}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({name, email})
+        });
+
+        if (res.ok) {
+          const updated = await res.json();
+          document.getElementById('edit-profile-modal').classList.add('hidden');
+          showToast(`Profile updated for ${updated.name}!`, '✓');
+
+          await loadStudentsList();
+          loadStudentDashboard(activeStudentId);
+        } else {
+          const err = await res.json();
+          alert(err.detail || 'Failed to update profile.');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function openProgressReportModal() {
+      try {
+        const [stdRes, sumRes, progRes, resRes] = await Promise.all([
+          fetch(`/students/${activeStudentId}`),
+          fetch(`/progress/student/${activeStudentId}/summary`),
+          fetch(`/progress/student/${activeStudentId}`),
+          fetch(`/students/${activeStudentId}/results`)
+        ]);
+
+        if (!stdRes.ok || !sumRes.ok) return;
+        const student = await stdRes.json();
+        const summary = await sumRes.json();
+        const progressList = progRes.ok ? await progRes.json() : [];
+        const results = resRes.ok ? await resRes.json() : [];
+
+        const container = document.getElementById('report-content');
+        container.innerHTML = `
+          <!-- Header Banner -->
+          <div class="p-5 bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl text-white">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span class="text-[10px] font-mono uppercase tracking-wider text-blue-300 font-bold">Official Student Transcript</span>
+                <h2 class="text-xl font-bold">${student.name}</h2>
+                <p class="text-xs text-slate-300 font-mono">${student.email} • Student ID: #${student.student_id}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-bold ${summary.is_inactive ? 'bg-rose-500/20 text-rose-300 border border-rose-400/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'}">
+                  ${summary.is_inactive ? 'Needs Support' : 'Active Learner'}
+                </span>
+                <span class="block text-[11px] text-slate-400 mt-1">Generated: ${new Date().toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 High-level Stats -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-xl text-center">
+              <span class="text-[10px] font-bold text-slate-400 uppercase">Enrolled</span>
+              <span class="block text-xl font-extrabold text-slate-900 mt-0.5">${summary.total_enrolled_courses} Programs</span>
+            </div>
+            <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-xl text-center">
+              <span class="text-[10px] font-bold text-slate-400 uppercase">Lessons Completed</span>
+              <span class="block text-xl font-extrabold text-emerald-600 mt-0.5">${summary.completed_lessons} / ${summary.total_lessons}</span>
+            </div>
+            <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-xl text-center">
+              <span class="text-[10px] font-bold text-slate-400 uppercase">Average Score</span>
+              <span class="block text-xl font-extrabold text-blue-600 font-mono mt-0.5">${summary.overall_average_score}%</span>
+            </div>
+            <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-xl text-center">
+              <span class="text-[10px] font-bold text-slate-400 uppercase">Completion Rate</span>
+              <span class="block text-xl font-extrabold text-purple-600 font-mono mt-0.5">${summary.overall_completion_percentage}%</span>
+            </div>
+          </div>
+
+          <!-- Course-by-Course Progress Breakdown -->
+          <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+            <div class="bg-slate-50 px-4 py-3 border-b border-slate-200/80">
+              <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Course Progress & Completion</h4>
+            </div>
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/50 text-slate-400 border-b border-slate-100">
+                <tr>
+                  <th class="py-2.5 px-4 font-semibold">Course Title</th>
+                  <th class="py-2.5 px-4 font-semibold text-center">Lessons</th>
+                  <th class="py-2.5 px-4 font-semibold">Progress Bar</th>
+                  <th class="py-2.5 px-4 font-semibold text-right">Completion %</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${(summary.courses_progress || []).map(cp => `
+                  <tr>
+                    <td class="py-3 px-4 font-bold text-slate-900">${cp.course_name}</td>
+                    <td class="py-3 px-4 font-mono text-center text-slate-600">${cp.completed_lessons} / ${cp.total_lessons}</td>
+                    <td class="py-3 px-4">
+                      <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: ${cp.completion_percentage}%"></div>
+                      </div>
+                    </td>
+                    <td class="py-3 px-4 font-mono font-bold text-right ${cp.completion_percentage === 100 ? 'text-emerald-600' : 'text-slate-800'}">${cp.completion_percentage}%</td>
+                  </tr>
+                `).join('') || '<tr><td colspan="4" class="p-4 text-center text-slate-400">No active course enrollments.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Assessment History & Evaluation Breakdown -->
+          <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+            <div class="bg-slate-50 px-4 py-3 border-b border-slate-200/80">
+              <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Assessment Evaluations & Weak Topics Identification</h4>
+            </div>
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/50 text-slate-400 border-b border-slate-100">
+                <tr>
+                  <th class="py-2.5 px-4 font-semibold">Assessment Title</th>
+                  <th class="py-2.5 px-4 font-semibold">Score</th>
+                  <th class="py-2.5 px-4 font-semibold">Status</th>
+                  <th class="py-2.5 px-4 font-semibold">Identified Weak Areas</th>
+                  <th class="py-2.5 px-4 font-semibold">Recommendation</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${results.map(r => `
+                  <tr>
+                    <td class="py-3 px-4 font-medium text-slate-900">${r.assessment_title || 'Assessment'}</td>
+                    <td class="py-3 px-4 font-mono font-bold ${r.passed ? 'text-emerald-600' : 'text-rose-600'}">${r.score_percentage}%</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.passed ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${r.passed ? 'PASS' : 'FAIL'}</span></td>
+                    <td class="py-3 px-4 text-slate-600 font-mono text-[11px]">${(r.weak_topics || []).join(', ') || 'None (Mastery)'}</td>
+                    <td class="py-3 px-4 text-slate-500 text-[11px]">${r.learning_recommendation || 'Keep up the good work!'}</td>
+                  </tr>
+                `).join('') || '<tr><td colspan="5" class="p-4 text-center text-slate-400">No assessment records found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        document.getElementById('progress-report-modal').classList.remove('hidden');
+      } catch (err) {
+        console.error('Error generating progress report:', err);
       }
     }
 
@@ -1617,6 +2365,7 @@
 
     // Initialize On Load
     window.addEventListener('DOMContentLoaded', () => {
+      loadStudentsList();
       loadStudentDashboard(1);
     });
   </script>
