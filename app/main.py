@@ -59,7 +59,7 @@ app.include_router(analytics_router)
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 def index_view(request: Request):
     """Serve the ArchintX interactive system dashboard matching the specification mockups."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.get("/health", tags=["System"])
