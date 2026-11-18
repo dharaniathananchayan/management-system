@@ -89,24 +89,32 @@
           </div>
         </div>
 
-        <!-- Right: Student Persona Selector & Register Action -->
-        <div class="flex items-center space-x-2.5 sm:space-x-3">
+        <!-- Right: Active Role Pill, Persona Selector & Login/Switch -->
+        <div class="flex items-center space-x-2 sm:space-x-2.5">
           
+          <!-- Role & Identity Pill -->
+          <div id="auth-role-pill" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition shadow-inner">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span>🎓 Student: View-Only</span>
+          </div>
+
           <!-- Persona Switcher -->
-          <div class="flex items-center bg-slate-800/80 border border-slate-700/80 rounded-xl px-2.5 py-1.5 shadow-inner">
+          <div id="learner-switcher-container" class="flex items-center bg-slate-800/80 border border-slate-700/80 rounded-xl px-2.5 py-1.5 shadow-inner">
             <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 ring-4 ring-emerald-400/20"></span>
-            <span class="text-xs text-slate-400 mr-2 hidden md:inline font-medium">Active Learner:</span>
+            <span class="text-xs text-slate-400 mr-2 hidden md:inline font-medium">Learner:</span>
             <select id="student-select" onchange="changeActiveStudent(this.value)" class="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer">
-              <option value="1" class="bg-slate-800 text-white">Alex Rivera (ID: 1)</option>
-              <option value="2" class="bg-slate-800 text-white">Samira Khan (ID: 2)</option>
-              <option value="3" class="bg-slate-800 text-white">David Chen (ID: 3)</option>
-              <option value="4" class="bg-slate-800 text-white">Inactive Student (ID: 4)</option>
+              <!-- Populated dynamically -->
             </select>
           </div>
 
-          <!-- Register Student Quick Button -->
-          <button onclick="openRegisterStudentModal()" class="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition flex items-center space-x-1" title="Register a new student profile">
+          <!-- Register Student Quick Button (Admin Only) -->
+          <button id="admin-btn-new-student" onclick="openRegisterStudentModal()" class="admin-only-action px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition flex items-center space-x-1" title="Register a new student profile">
             <span>+ New Student</span>
+          </button>
+
+          <!-- Login / Switch Role Button -->
+          <button onclick="openLoginModal()" class="px-3 py-1.5 text-xs font-bold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 rounded-xl transition flex items-center space-x-1.5" title="Switch between Student (View-Only) and Admin roles">
+            <span>🔑 Switch Role / Login</span>
           </button>
 
         </div>
@@ -144,6 +152,14 @@
           </button>
 
         </nav>
+
+        <!-- Role View Mode Notice Pill -->
+        <div class="flex items-center">
+          <span id="role-view-notice" class="text-xs font-bold px-3 py-1 rounded-full border transition flex items-center space-x-1.5 bg-amber-50 text-amber-800 border-amber-200">
+            <span>👁️ View-Only Mode</span>
+            <span class="text-amber-700 font-normal hidden sm:inline">• Administrative actions restricted</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -334,8 +350,8 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
               <span>Enroll Student</span>
             </button>
-            <!-- Create Course Button -->
-            <button onclick="document.getElementById('new-course-modal').classList.remove('hidden')" class="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition flex items-center space-x-1.5">
+            <!-- Create Course Button (Admin Only) -->
+            <button id="admin-btn-create-course" onclick="document.getElementById('new-course-modal').classList.remove('hidden')" class="admin-only-action px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition flex items-center space-x-1.5" title="Author a new course">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               <span>New Course</span>
             </button>
@@ -423,7 +439,7 @@
 
           <!-- Timer, Creator & Switcher -->
           <div class="flex items-center space-x-2.5">
-            <button onclick="openCreateAssessmentModal()" class="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition flex items-center space-x-1" title="Author a new quiz or assessment">
+            <button id="admin-btn-create-assessment" onclick="openCreateAssessmentModal()" class="admin-only-action px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition flex items-center space-x-1" title="Author a new quiz or assessment">
               <span>+ Create Assessment</span>
             </button>
             <div class="flex items-center space-x-2 bg-slate-800/90 border border-slate-700 px-3.5 py-1.5 rounded-xl font-mono text-xs shadow-inner">
@@ -624,6 +640,83 @@
     </section>
 
   </main>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: Student & Admin Login / Role Switcher                          -->
+  <!-- ===================================================================== -->
+  <div id="login-modal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-slate-100">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-blue-500/20">
+            🔑
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Sign In & Select Role</h3>
+            <p class="text-xs text-slate-500">Student (View-Only) & Admin (Full Access) authentication</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <!-- Quick Role Selection Presets -->
+      <div class="space-y-2.5 mb-5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Instant Demo Roles:</span>
+        <button type="button" onclick="quickLogin('student')" class="w-full py-2.5 px-4 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100/80 transition flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold">🎓</span>
+            <div class="text-left">
+              <span class="text-xs font-bold text-blue-950 block">Student (Alex Rivera)</span>
+              <span class="text-[10px] text-blue-600 font-mono">alex.rivera@example.com • View-Only Mode</span>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-blue-600 group-hover:translate-x-0.5 transition">Login →</span>
+        </button>
+
+        <button type="button" onclick="quickLogin('admin')" class="w-full py-2.5 px-4 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100/80 transition flex items-center justify-between group cursor-pointer">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-bold">🛡️</span>
+            <div class="text-left">
+              <span class="text-xs font-bold text-purple-950 block">Admin (Instructor Sarah)</span>
+              <span class="text-[10px] text-purple-600 font-mono">admin@archintx.com • Full Management</span>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-purple-600 group-hover:translate-x-0.5 transition">Login →</span>
+        </button>
+      </div>
+
+      <div class="flex items-center my-4">
+        <div class="flex-grow border-t border-slate-200"></div>
+        <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">or sign in with credentials</span>
+        <div class="flex-grow border-t border-slate-200"></div>
+      </div>
+
+      <!-- Standard Login Form -->
+      <form id="login-form" onsubmit="handleCustomLogin(event)">
+        <div class="space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+            <input type="email" id="login-email" required placeholder="name@archintx.org" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-mono">
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" onclick="document.getElementById('login-modal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-md transition">
+            Sign In
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- ===================================================================== -->
   <!-- MODAL: Enrollment Form (enrollment_id, student_id, course_id)         -->
@@ -841,7 +934,7 @@
       <!-- Quick Action Bar -->
       <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
         <span class="text-xs font-semibold text-slate-600">Curriculum Units & Learning Materials</span>
-        <button type="button" onclick="toggleCurriculumAddForm()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-lg border border-blue-200 transition flex items-center space-x-1">
+        <button id="admin-btn-add-unit" type="button" onclick="toggleCurriculumAddForm()" class="admin-only-action text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-lg border border-blue-200 transition flex items-center space-x-1">
           <span>+ Add Unit / Lesson</span>
         </button>
       </div>
@@ -876,7 +969,7 @@
 
       <!-- Footer Actions -->
       <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100">
-        <button type="button" onclick="handleDeleteCurrentCourse()" class="px-3.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-center space-x-1">
+        <button id="admin-btn-delete-course" type="button" onclick="handleDeleteCurrentCourse()" class="admin-only-action px-3.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-center space-x-1">
           <span>🗑 Delete Course</span>
         </button>
         <button type="button" onclick="document.getElementById('curriculum-modal').classList.add('hidden')" class="px-4 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
@@ -1097,6 +1190,17 @@
   <!-- JAVASCRIPT APPLICATION LOGIC                                          -->
   <!-- ===================================================================== -->
   <script>
+    // ==========================================
+    // ROLE-BASED AUTHENTICATION & ACCESS CONTROL
+    // ==========================================
+    let currentAuthUser = {
+      student_id: 1,
+      name: "Alex Rivera",
+      email: "alex.rivera@example.com",
+      role: "student", // "student" (View-Only Mode) or "admin" (Full Access)
+      token: null
+    };
+
     let activeStudentId = 1;
     let cachedCourses = [];
     let currentFilterStatus = 'all';
@@ -1112,6 +1216,138 @@
         toast.classList.add('hidden');
         toast.classList.remove('toast-animate');
       }, 3500);
+    }
+
+    // Role-Based Access Enforcement
+    function applyRoleBasedAccess(role) {
+      currentAuthUser.role = role;
+      const isAdmin = role === 'admin';
+
+      // 1. Header Role & Identity Badge
+      const pill = document.getElementById('auth-role-pill');
+      if (pill) {
+        if (isAdmin) {
+          pill.className = 'flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-purple-500/20 text-purple-300 border border-purple-400/40 shadow-inner';
+          pill.innerHTML = `<span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span><span>🛡️ Role: Admin (Full Access)</span>`;
+        } else {
+          pill.className = 'flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-500/20 text-blue-300 border border-blue-400/40 shadow-inner';
+          pill.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span><span>🎓 Role: Student (View-Only)</span>`;
+        }
+      }
+
+      // 2. Navigation Strip Role Notice
+      const notice = document.getElementById('role-view-notice');
+      if (notice) {
+        if (isAdmin) {
+          notice.className = 'text-xs font-bold px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 flex items-center space-x-1';
+          notice.innerHTML = `<span>🛡️ Administrator</span><span class="text-slate-400 font-normal hidden sm:inline">• Full Author & Management Access</span>`;
+        } else {
+          notice.className = 'text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center space-x-1';
+          notice.innerHTML = `<span>👁️ View-Only Mode</span><span class="text-amber-700 font-normal hidden sm:inline">• Administrative actions restricted</span>`;
+        }
+      }
+
+      // 3. Toggle Admin-Only Action Elements across all tabs and modals
+      document.querySelectorAll('.admin-only-action').forEach(el => {
+        if (isAdmin) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      // 4. Refresh Ledger to toggle Drop / View-Only column
+      loadEnrollmentsLedger();
+    }
+
+    function openLoginModal() {
+      document.getElementById('login-form').reset();
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    async function quickLogin(role) {
+      let email = "alex.rivera@example.com";
+      let pass = "student123";
+      if (role === 'admin') {
+        email = "admin@archintx.com";
+        pass = "admin123";
+      }
+
+      try {
+        const res = await fetch('/students/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({email, password: pass})
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          currentAuthUser = {
+            student_id: data.student.student_id,
+            name: data.student.name,
+            email: data.student.email,
+            role: data.student.role,
+            token: data.access_token
+          };
+          localStorage.setItem('archintx_user', JSON.stringify(currentAuthUser));
+          document.getElementById('login-modal').classList.add('hidden');
+          applyRoleBasedAccess(data.student.role);
+
+          if (data.student.role === 'student') {
+            activeStudentId = data.student.student_id;
+            const sel = document.getElementById('student-select');
+            if (sel) sel.value = activeStudentId;
+            loadStudentDashboard(activeStudentId);
+          }
+          showToast(`Logged in as ${data.student.role.toUpperCase()}: ${data.student.name}`, '🔑');
+        } else {
+          const err = await res.json();
+          alert(err.detail || 'Login failed.');
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+      }
+    }
+
+    async function handleCustomLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await fetch('/students/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({email, password})
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          currentAuthUser = {
+            student_id: data.student.student_id,
+            name: data.student.name,
+            email: data.student.email,
+            role: data.student.role,
+            token: data.access_token
+          };
+          localStorage.setItem('archintx_user', JSON.stringify(currentAuthUser));
+          document.getElementById('login-modal').classList.add('hidden');
+          applyRoleBasedAccess(data.student.role);
+
+          if (data.student.role === 'student') {
+            activeStudentId = data.student.student_id;
+            const sel = document.getElementById('student-select');
+            if (sel) sel.value = activeStudentId;
+            loadStudentDashboard(activeStudentId);
+          }
+          showToast(`Signed in as ${data.student.role.toUpperCase()}: ${data.student.name}`, '🔑');
+        } else {
+          const err = await res.json();
+          alert(err.detail || 'Invalid login credentials.');
+        }
+      } catch (err) {
+        console.error('Custom login error:', err);
+      }
     }
 
     // Persona Switcher
@@ -1443,7 +1679,9 @@
                   <td class="py-3 px-4 text-slate-500 font-mono">${dateStr}</td>
                   <td class="py-3 px-4"><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] uppercase">${e.status}</span></td>
                   <td class="py-3 px-4 text-right">
-                    <button onclick="deleteEnrollmentRecord(${e.enrollment_id})" class="text-rose-600 hover:text-rose-800 font-semibold hover:underline">Drop</button>
+                    ${currentAuthUser.role === 'admin' 
+                      ? `<button onclick="deleteEnrollmentRecord(${e.enrollment_id})" class="text-rose-600 hover:text-rose-800 font-semibold hover:underline">Drop</button>` 
+                      : `<span class="text-[11px] text-slate-400 font-medium">View Only</span>`}
                   </td>
                 </tr>
               `);
@@ -2055,7 +2293,9 @@
                   </div>
                   <div class="text-right">
                     <span class="px-2.5 py-0.5 rounded-full border text-rose-700 bg-rose-50 border-rose-200 font-bold text-[10px]">${s.days_inactive}d Inactive</span>
-                    <button onclick="sendReminder('${s.name}')" class="block text-[11px] text-blue-600 font-semibold hover:underline mt-1">Send Nudge →</button>
+                    ${currentAuthUser.role === 'admin' 
+                      ? `<button onclick="sendReminder('${s.name}')" class="block text-[11px] text-blue-600 font-semibold hover:underline mt-1">Send Nudge →</button>` 
+                      : `<span class="block text-[10px] text-slate-400 mt-1 font-medium">🔒 Admin Action</span>`}
                   </div>
                 </div>
               `);
@@ -2129,7 +2369,9 @@
               <td class="py-3 px-3 font-mono text-slate-700">${s.total_assessments_taken}</td>
               <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">At Risk</span></td>
               <td class="py-3 px-3 text-right">
-                <button onclick="sendReminder('${s.name}')" class="text-blue-600 hover:text-blue-800 font-semibold hover:underline">Schedule Tutoring →</button>
+                ${currentAuthUser.role === 'admin' 
+                  ? `<button onclick="sendReminder('${s.name}')" class="text-blue-600 hover:text-blue-800 font-semibold hover:underline">Schedule Tutoring →</button>` 
+                  : `<span class="text-[11px] text-slate-400 font-medium">🔒 Admin Action</span>`}
               </td>
             </tr>
           `);
@@ -2363,10 +2605,20 @@
       showToast(`Re-engagement study reminder sent to ${studentName}!`, '✉️');
     }
 
-    // Initialize On Load
+    // Initialize On Load with Role-Based Access Enforcement
     window.addEventListener('DOMContentLoaded', () => {
+      // Check stored user session or default to Student (View-Only Mode)
+      const savedUser = localStorage.getItem('archintx_user');
+      if (savedUser) {
+        try {
+          currentAuthUser = JSON.parse(savedUser);
+        } catch (e) {
+          console.error('Error reading stored user session:', e);
+        }
+      }
+      applyRoleBasedAccess(currentAuthUser.role || 'student');
       loadStudentsList();
-      loadStudentDashboard(1);
+      loadStudentDashboard(currentAuthUser.student_id || 1);
     });
   </script>
 </body>
