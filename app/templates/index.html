@@ -340,6 +340,11 @@
               <input type="text" id="course-search-input" oninput="filterCourses(this.value)" placeholder="Search courses..." class="pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-blue-500 w-48 sm:w-64 transition">
               <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
+            <!-- Enroll Student Form Button -->
+            <button onclick="openEnrollmentModal()" class="px-4 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/20 transition flex items-center space-x-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+              <span>Enroll Student (Form)</span>
+            </button>
             <!-- Create Course Button -->
             <button onclick="document.getElementById('new-course-modal').classList.remove('hidden')" class="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition flex items-center space-x-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -360,6 +365,45 @@
       <!-- Course Cards Grid -->
       <div id="course-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Populated dynamically via JS -->
+      </div>
+
+      <!-- Active Enrollments Ledger Section (Using enrollment_id, student_id, course_id) -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs mt-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-base font-bold text-slate-900">Active Course Enrollments Ledger</h2>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold" id="enrollments-count-badge">0 Records</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">Records mapped to <code class="font-mono text-indigo-600 font-semibold">enrollment_id</code>, <code class="font-mono text-indigo-600 font-semibold">student_id</code>, and <code class="font-mono text-indigo-600 font-semibold">course_id</code>.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="openEnrollmentModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3.5 py-1.5 rounded-xl border border-indigo-200 transition flex items-center space-x-1.5">
+              <span>+ New Enrollment Form</span>
+            </button>
+            <button onclick="loadEnrollmentsLedger()" class="text-xs text-slate-500 hover:text-slate-800 font-medium">
+              Refresh ↻
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto mt-4">
+          <table class="min-w-full divide-y divide-slate-100 text-xs">
+            <thead class="bg-slate-50/80 text-slate-600 uppercase font-semibold">
+              <tr>
+                <th class="py-3 px-4 text-left">Enrollment ID</th>
+                <th class="py-3 px-4 text-left">Student ID & Name</th>
+                <th class="py-3 px-4 text-left">Course ID & Title</th>
+                <th class="py-3 px-4 text-left">Enrolled Date</th>
+                <th class="py-3 px-4 text-left">Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="enrollments-ledger-tbody" class="divide-y divide-slate-100 bg-white">
+              <!-- Populated via loadEnrollmentsLedger() -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </section>
@@ -553,6 +597,78 @@
     </section>
 
   </main>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: Enrollment Form (enrollment_id, student_id, course_id)         -->
+  <!-- ===================================================================== -->
+  <div id="enrollment-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">📝</span>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Course Enrollment Form</h3>
+            <p class="text-xs text-slate-500">Requires enrollment_id, student_id, and course_id</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('enrollment-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="enrollment-form" onsubmit="handleEnrollmentFormSubmit(event)">
+        <div class="space-y-4">
+          
+          <!-- Field 1: enrollment_id -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Enrollment ID <span class="text-slate-400 font-normal font-mono">(enrollment_id)</span>
+            </label>
+            <input type="number" id="form-enrollment-id" placeholder="Optional (e.g. 501); auto-assigned if empty" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600 font-mono">
+            <p class="text-[10px] text-slate-400 mt-1">Leave empty to auto-generate the next primary key.</p>
+          </div>
+
+          <!-- Field 2: student_id -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Student ID & Profile <span class="text-slate-400 font-normal font-mono">(student_id)</span>
+            </label>
+            <select id="form-student-id" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600">
+              <!-- Populated dynamically via JS -->
+            </select>
+          </div>
+
+          <!-- Field 3: course_id -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Course ID & Title <span class="text-slate-400 font-normal font-mono">(course_id)</span>
+            </label>
+            <select id="form-course-id" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-indigo-600">
+              <!-- Populated dynamically via JS -->
+            </select>
+          </div>
+
+          <!-- Field 4: Status -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Status</label>
+            <select id="form-enrollment-status" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm">
+              <option value="active">active</option>
+              <option value="completed">completed</option>
+              <option value="dropped">dropped</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" onclick="document.getElementById('enrollment-modal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/20 transition">
+            Submit Enrollment Form
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- ===================================================================== -->
   <!-- MODAL: Create New Course                                              -->
@@ -783,6 +899,7 @@
         if (!res.ok) return;
         cachedCourses = await res.json();
         renderCourseCards(cachedCourses);
+        loadEnrollmentsLedger();
       } catch (err) {
         console.error('Error loading courses:', err);
       }
@@ -852,8 +969,8 @@
               <button onclick="viewCourseDetails(${c.course_id})" class="flex-1 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition text-center">
                 View Curriculum
               </button>
-              <button onclick="enrollStudentInCourse(${c.course_id})" class="flex-1 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition text-center">
-                Enroll Active
+              <button onclick="openEnrollmentModal(${c.course_id})" class="flex-1 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-1">
+                <span>Enroll (Form)</span>
               </button>
             </div>
           </div>
@@ -903,10 +1020,128 @@
     }
 
     async function enrollStudentInCourse(courseId) {
-      const res = await fetch(`/courses/${courseId}/enroll?student_id=${activeStudentId}`, {method: 'POST'});
+      openEnrollmentModal(courseId);
+    }
+
+    // ==========================================
+    // ENROLLMENTS LEDGER & FORM (enrollment_id, student_id, course_id)
+    // ==========================================
+    let cachedStudents = [];
+
+    async function loadEnrollmentsLedger() {
+      try {
+        const [enrRes, stdRes, crsRes] = await Promise.all([
+          fetch('/enrollments'),
+          fetch('/students'),
+          fetch('/courses')
+        ]);
+
+        if (stdRes.ok) cachedStudents = await stdRes.json();
+        if (crsRes.ok) cachedCourses = await crsRes.json();
+
+        if (enrRes.ok) {
+          const enrollments = await enrRes.json();
+          document.getElementById('enrollments-count-badge').textContent = `${enrollments.length} Records`;
+          const tbody = document.getElementById('enrollments-ledger-tbody');
+          tbody.innerHTML = '';
+
+          if (enrollments.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No active enrollment records found.</td></tr>`;
+          } else {
+            enrollments.forEach(e => {
+              const dateStr = new Date(e.enrolled_at).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+              tbody.insertAdjacentHTML('beforeend', `
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-3 px-4 font-mono font-bold text-indigo-600">#${e.enrollment_id}</td>
+                  <td class="py-3 px-4 font-medium text-slate-900">${e.student_name || 'Student'} <span class="text-slate-400 font-mono text-[11px]">(ID: ${e.student_id})</span></td>
+                  <td class="py-3 px-4 font-medium text-slate-800">${e.course_name || 'Course'} <span class="text-slate-400 font-mono text-[11px]">(ID: ${e.course_id})</span></td>
+                  <td class="py-3 px-4 text-slate-500 font-mono">${dateStr}</td>
+                  <td class="py-3 px-4"><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px] uppercase">${e.status}</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button onclick="deleteEnrollmentRecord(${e.enrollment_id})" class="text-rose-600 hover:text-rose-800 font-semibold hover:underline">Drop</button>
+                  </td>
+                </tr>
+              `);
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Error loading enrollments ledger:', err);
+      }
+    }
+
+    async function openEnrollmentModal(preselectedCourseId = null) {
+      const stdSelect = document.getElementById('form-student-id');
+      const crsSelect = document.getElementById('form-course-id');
+
+      if (cachedStudents.length === 0) {
+        const stdRes = await fetch('/students');
+        if (stdRes.ok) cachedStudents = await stdRes.json();
+      }
+      if (cachedCourses.length === 0) {
+        const crsRes = await fetch('/courses');
+        if (crsRes.ok) cachedCourses = await crsRes.json();
+      }
+
+      stdSelect.innerHTML = '';
+      cachedStudents.forEach(s => {
+        const selected = s.student_id === activeStudentId ? 'selected' : '';
+        stdSelect.insertAdjacentHTML('beforeend', `<option value="${s.student_id}" ${selected}>Student ID: ${s.student_id} — ${s.name} (${s.email})</option>`);
+      });
+
+      crsSelect.innerHTML = '';
+      cachedCourses.forEach(c => {
+        const selected = (preselectedCourseId && c.course_id === preselectedCourseId) ? 'selected' : '';
+        crsSelect.insertAdjacentHTML('beforeend', `<option value="${c.course_id}" ${selected}>Course ID: ${c.course_id} — ${c.course_name}</option>`);
+      });
+
+      document.getElementById('form-enrollment-id').value = '';
+      document.getElementById('enrollment-modal').classList.remove('hidden');
+    }
+
+    async function handleEnrollmentFormSubmit(e) {
+      e.preventDefault();
+      const rawEnrollmentId = document.getElementById('form-enrollment-id').value.trim();
+      const studentId = parseInt(document.getElementById('form-student-id').value);
+      const courseId = parseInt(document.getElementById('form-course-id').value);
+      const status = document.getElementById('form-enrollment-status').value;
+
+      const payload = {
+        student_id: studentId,
+        course_id: courseId,
+        status: status,
+      };
+      if (rawEnrollmentId) {
+        payload.enrollment_id = parseInt(rawEnrollmentId);
+      }
+
+      const res = await fetch('/enrollments', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+
       if (res.ok) {
-        showToast(`Enrolled Student ID: ${activeStudentId} successfully!`);
+        const data = await res.json();
+        document.getElementById('enrollment-modal').classList.add('hidden');
+        document.getElementById('enrollment-form').reset();
+        showToast(`Enrollment #${data.enrollment_id} created for Student #${data.student_id}!`);
         loadCourses();
+        loadEnrollmentsLedger();
+        loadStudentDashboard(activeStudentId);
+      } else {
+        const err = await res.json();
+        alert(err.detail || 'Enrollment failed. Please verify IDs.');
+      }
+    }
+
+    async function deleteEnrollmentRecord(enrollmentId) {
+      if (!confirm(`Are you sure you want to drop Enrollment #${enrollmentId}?`)) return;
+      const res = await fetch(`/enrollments/${enrollmentId}`, {method: 'DELETE'});
+      if (res.status === 204 || res.ok) {
+        showToast(`Dropped Enrollment #${enrollmentId}`);
+        loadCourses();
+        loadEnrollmentsLedger();
         loadStudentDashboard(activeStudentId);
       }
     }

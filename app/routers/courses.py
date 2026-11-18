@@ -181,13 +181,18 @@ def enroll_student(
         return EnrollmentOut(
             enrollment_id=existing.enrollment_id,
             student_id=existing.student_id,
+            student_name=student.name,
             course_id=existing.course_id,
             course_name=course.course_name,
             enrolled_at=existing.enrolled_at,
             status=existing.status,
         )
 
-    enrollment = Enrollment(student_id=target_student_id, course_id=course_id, status="active")
+    enr_data = {"student_id": target_student_id, "course_id": course_id, "status": "active"}
+    if payload and payload.enrollment_id is not None:
+        enr_data["enrollment_id"] = payload.enrollment_id
+
+    enrollment = Enrollment(**enr_data)
     db.add(enrollment)
     db.commit()
     db.refresh(enrollment)
@@ -195,6 +200,7 @@ def enroll_student(
     return EnrollmentOut(
         enrollment_id=enrollment.enrollment_id,
         student_id=enrollment.student_id,
+        student_name=student.name,
         course_id=enrollment.course_id,
         course_name=course.course_name,
         enrolled_at=enrollment.enrolled_at,

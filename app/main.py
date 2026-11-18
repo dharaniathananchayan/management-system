@@ -11,6 +11,7 @@ from app.routers import (
     auth_router,
     students_router,
     courses_router,
+    enrollments_router,
     assessments_router,
     progress_router,
     analytics_router,
@@ -50,6 +51,7 @@ app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 app.include_router(auth_router)
 app.include_router(students_router)
 app.include_router(courses_router)
+app.include_router(enrollments_router)
 app.include_router(assessments_router)
 app.include_router(progress_router)
 app.include_router(analytics_router)

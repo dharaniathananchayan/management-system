@@ -4,16 +4,23 @@ from pydantic import BaseModel, Field
 
 
 class EnrollmentBase(BaseModel):
-    course_id: int = Field(..., example=1)
+    student_id: int = Field(..., example=1, description="ID of student enrolling")
+    course_id: int = Field(..., example=1, description="ID of course to enroll in")
 
 
 class EnrollmentCreate(EnrollmentBase):
-    student_id: Optional[int] = Field(None, example=1)
+    enrollment_id: Optional[int] = Field(
+        None,
+        example=101,
+        description="Optional manual Enrollment ID (auto-generated if omitted)",
+    )
+    status: Optional[str] = Field("active", example="active")
 
 
 class EnrollmentOut(BaseModel):
     enrollment_id: int
     student_id: int
+    student_name: Optional[str] = None
     course_id: int
     course_name: Optional[str] = None
     enrolled_at: datetime
