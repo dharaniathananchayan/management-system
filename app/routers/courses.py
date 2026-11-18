@@ -35,6 +35,12 @@ def _populate_course_stats(course: Course, db: Session) -> CourseOut:
     return CourseOut(
         course_id=course.course_id,
         course_name=course.course_name,
+        category=getattr(course, "category", "Python & Backend") or "Python & Backend",
+        level=getattr(course, "level", "Beginner") or "Beginner",
+        duration_hours=getattr(course, "duration_hours", 20) or 20,
+        passing_criteria=getattr(course, "passing_criteria", 60) or 60,
+        instructor_name=getattr(course, "instructor_name", "ArchintX Faculty") or "ArchintX Faculty",
+        prerequisites=getattr(course, "prerequisites", None),
         description=course.description,
         status=course.status,
         created_at=course.created_at,
@@ -47,13 +53,40 @@ def _populate_course_stats(course: Course, db: Session) -> CourseOut:
 
 @router.post("/courses", response_model=CourseOut, status_code=status.HTTP_201_CREATED)
 def create_course(payload: CourseCreate, db: Session = Depends(get_db)):
-    """Create a new course in ArchintX."""
+    """Create a new course in ArchintX with complete curriculum metadata."""
     course = Course(
         course_name=payload.course_name.strip(),
+        category=payload.category or "Python & Backend",
+        level=payload.level or "Beginner",
+        duration_hours=payload.duration_hours or 20,
+        passing_criteria=payload.passing_criteria or 60,
+        instructor_name=payload.instructor_name or "ArchintX Faculty",
+        prerequisites=payload.prerequisites,
         description=payload.description,
         status=payload.status or "Active",
     )
     db.add(course)
+    db.flush()
+
+    # Optional automatic initial module & lesson generation
+    if payload.initial_module_name:
+        mod = Module(
+            course_id=course.course_id,
+            module_name=payload.initial_module_name.strip(),
+            order_index=1,
+        )
+        db.add(mod)
+        db.flush()
+        if payload.initial_lesson_title:
+            les = Lesson(
+                module_id=mod.module_id,
+                lesson_title=payload.initial_lesson_title.strip(),
+                content="Initial lesson introductory content and overview.",
+                duration_minutes=20,
+                order_index=1,
+            )
+            db.add(les)
+
     db.commit()
     db.refresh(course)
     return _populate_course_stats(course, db)
@@ -118,6 +151,18 @@ def update_course(course_id: int, payload: CourseUpdate, db: Session = Depends(g
 
     if payload.course_name is not None:
         course.course_name = payload.course_name.strip()
+    if payload.category is not None:
+        course.category = payload.category
+    if payload.level is not None:
+        course.level = payload.level
+    if payload.duration_hours is not None:
+        course.duration_hours = payload.duration_hours
+    if payload.passing_criteria is not None:
+        course.passing_criteria = payload.passing_criteria
+    if payload.instructor_name is not None:
+        course.instructor_name = payload.instructor_name
+    if payload.prerequisites is not None:
+        course.prerequisites = payload.prerequisites
     if payload.description is not None:
         course.description = payload.description
     if payload.status is not None:

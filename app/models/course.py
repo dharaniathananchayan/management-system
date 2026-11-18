@@ -9,6 +9,12 @@ class Course(Base):
 
     course_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     course_name = Column(String(150), nullable=False, index=True)
+    category = Column(String(80), default="Python & Backend", nullable=True)
+    level = Column(String(50), default="Beginner", nullable=True)  # Beginner, Intermediate, Advanced
+    duration_hours = Column(Integer, default=20, nullable=True)
+    passing_criteria = Column(Integer, default=60, nullable=True)
+    instructor_name = Column(String(120), default="ArchintX Faculty", nullable=True)
+    prerequisites = Column(String(255), nullable=True)
     description = Column(Text, nullable=True)
     status = Column(String(30), default="Active", nullable=False)  # Active, Draft, Archived
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)

@@ -72,21 +72,45 @@ def seed_database():
         # 2. Courses (Matching Example 2 Mockup: Python Fundamentals (8 modules), SQL (6), API (5), Data Analytics (7))
         c1 = Course(
             course_name="Python Fundamentals",
+            category="Python & Backend",
+            level="Beginner",
+            duration_hours=30,
+            passing_criteria=60,
+            instructor_name="Dr. Alan Foster",
+            prerequisites="None (Beginner friendly)",
             description="Complete foundation in Python syntax, data structures, and object-oriented programming.",
             status="Active",
         )
         c2 = Course(
             course_name="SQL for Beginners",
+            category="Database & SQL",
+            level="Beginner",
+            duration_hours=20,
+            passing_criteria=65,
+            instructor_name="Priya Sharma",
+            prerequisites="Basic computer literacy",
             description="Relational database queries, joins, aggregations, and performance indexing.",
             status="Active",
         )
         c3 = Course(
             course_name="API Development",
+            category="Web Development",
+            level="Intermediate",
+            duration_hours=25,
+            passing_criteria=70,
+            instructor_name="Sarah Jenkins",
+            prerequisites="Python Fundamentals",
             description="Building high-performance REST APIs with FastAPI, Pydantic, and JWT authentication.",
             status="Draft",
         )
         c4 = Course(
             course_name="Data Analytics",
+            category="Data Science & AI",
+            level="Advanced",
+            duration_hours=35,
+            passing_criteria=75,
+            instructor_name="Marcus Vance",
+            prerequisites="Python & SQL Basics",
             description="Exploratory data analysis, Pandas manipulation, and Plotly visualization techniques.",
             status="Active",
         )

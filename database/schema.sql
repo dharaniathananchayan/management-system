@@ -22,6 +22,12 @@ CREATE INDEX IF NOT EXISTS idx_students_role ON students(role);
 CREATE TABLE IF NOT EXISTS courses (
     course_id SERIAL PRIMARY KEY,
     course_name VARCHAR(150) NOT NULL,
+    category VARCHAR(80) DEFAULT 'Python & Backend',
+    level VARCHAR(50) DEFAULT 'Beginner',
+    duration_hours INTEGER DEFAULT 20,
+    passing_criteria INTEGER DEFAULT 60,
+    instructor_name VARCHAR(120) DEFAULT 'ArchintX Faculty',
+    prerequisites VARCHAR(255),
     description TEXT,
     status VARCHAR(30) NOT NULL DEFAULT 'Active',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

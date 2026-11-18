@@ -671,38 +671,127 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL: Create New Course                                              -->
+  <!-- MODAL: Create New Course (Enhanced with relevant fields)              -->
   <!-- ===================================================================== -->
   <div id="new-course-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-        <h3 class="text-base font-bold text-slate-900">Create New Course</h3>
-        <button onclick="document.getElementById('new-course-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
-      </div>
-      <form id="create-course-form" onsubmit="handleCreateCourse(event)">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Course Title</label>
-            <input type="text" id="new-course-name" required placeholder="e.g. Distributed Systems & Docker" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-7 border border-slate-100 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-base">
+            🎓
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Description</label>
-            <textarea id="new-course-desc" rows="3" placeholder="Provide a summary of the learning objectives..." class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Publication Status</label>
-            <select id="new-course-status" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm">
-              <option value="Active">Active</option>
-              <option value="Draft">Draft</option>
-            </select>
+            <h3 class="text-base font-extrabold text-slate-900">Create New Course & Curriculum</h3>
+            <p class="text-xs text-slate-500">Configure program syllabus, target competency, and instructional parameters.</p>
           </div>
         </div>
+        <button onclick="document.getElementById('new-course-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="create-course-form" onsubmit="handleCreateCourse(event)">
+        <div class="space-y-4">
+          
+          <!-- 1. Course Title -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Course Title <span class="text-rose-500">*</span>
+            </label>
+            <input type="text" id="new-course-name" required placeholder="e.g. Distributed Systems & Microservices in Python" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-medium">
+          </div>
+
+          <!-- 2. Category & Difficulty Level -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Domain / Category
+              </label>
+              <select id="new-course-category" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+                <option value="Python & Backend">Python & Backend</option>
+                <option value="Database & SQL">Database & SQL</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Data Science & AI">Data Science & AI</option>
+                <option value="Cloud & DevOps">Cloud & DevOps</option>
+                <option value="Software Engineering">Software Engineering</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Difficulty Level
+              </label>
+              <select id="new-course-level" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+                <option value="Beginner">Beginner (Foundational)</option>
+                <option value="Intermediate">Intermediate (Practitioner)</option>
+                <option value="Advanced">Advanced (Expert)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 3. Instructor, Duration & Passing Criteria -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Lead Instructor</label>
+              <input type="text" id="new-course-instructor" placeholder="e.g. Dr. Sarah Jenkins" value="ArchintX Faculty" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
+              <input type="number" id="new-course-duration" min="1" max="500" value="24" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Passing Score (%)</label>
+              <input type="number" id="new-course-passing" min="40" max="100" value="60" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 font-mono">
+            </div>
+          </div>
+
+          <!-- 4. Prerequisites & Publication Status -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Prerequisites</label>
+              <input type="text" id="new-course-prerequisites" placeholder="e.g. Basic Python, Git fundamentals" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Publication Status</label>
+              <select id="new-course-status" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+                <option value="Active">Active (Published immediately)</option>
+                <option value="Draft">Draft (Internal review)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 5. Description & Learning Objectives -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Course Description & Learning Objectives
+            </label>
+            <textarea id="new-course-desc" rows="3" placeholder="Outline the curriculum scope, core competencies, and final project deliverables..." class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600 leading-relaxed"></textarea>
+          </div>
+
+          <!-- 6. Optional Starter Module & Lesson Initialization -->
+          <div class="p-4 bg-slate-50 border border-slate-200/80 rounded-xl">
+            <span class="text-xs font-bold text-slate-800 block mb-2">⚡ Quickstart: Initialize Starter Module & Lesson</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Initial Module Name</label>
+                <input type="text" id="new-course-initial-module" placeholder="e.g. Module 1: Architecture Foundations" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-blue-500">
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Initial Lesson Title</label>
+                <input type="text" id="new-course-initial-lesson" placeholder="e.g. Lesson 1.1: System Setup & Tools" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-blue-500">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form Actions -->
         <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-slate-100">
           <button type="button" onclick="document.getElementById('new-course-modal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
             Cancel
           </button>
-          <button type="submit" class="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition">
-            Publish Course
+          <button type="submit" class="px-6 py-2.5 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition flex items-center space-x-1.5">
+            <span>Publish Program</span>
+            <span>→</span>
           </button>
         </div>
       </form>
@@ -927,27 +1016,39 @@
 
         // Gradients by category
         let gradient = 'from-blue-600 to-indigo-700';
-        if (c.course_name.includes('SQL')) gradient = 'from-emerald-600 to-teal-700';
-        if (c.course_name.includes('API') || c.course_name.includes('Web')) gradient = 'from-indigo-600 to-purple-700';
-        if (c.course_name.includes('Data')) gradient = 'from-cyan-600 to-blue-700';
+        if (c.course_name.includes('SQL') || (c.category && c.category.includes('Database'))) gradient = 'from-emerald-600 to-teal-700';
+        if (c.course_name.includes('API') || c.course_name.includes('Web') || (c.category && c.category.includes('Web'))) gradient = 'from-indigo-600 to-purple-700';
+        if (c.course_name.includes('Data') || (c.category && c.category.includes('Data'))) gradient = 'from-cyan-600 to-blue-700';
 
         const cardHtml = `
           <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-md transition flex flex-col justify-between">
             <div>
               <!-- Banner Strip -->
-              <div class="h-28 bg-gradient-to-tr ${gradient} p-5 flex flex-col justify-between text-white relative">
+              <div class="h-32 bg-gradient-to-tr ${gradient} p-5 flex flex-col justify-between text-white relative">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-xs">ID: ${c.course_id}</span>
+                  <div class="flex items-center space-x-1.5">
+                    <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-xs">ID: ${c.course_id}</span>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-xs">${c.level || 'Beginner'}</span>
+                  </div>
                   ${statusBadge}
                 </div>
-                <h3 class="text-base font-extrabold tracking-tight truncate">${c.course_name}</h3>
+                <div>
+                  <span class="text-[10px] font-semibold uppercase tracking-wider text-blue-200/90 block">${c.category || 'General'}</span>
+                  <h3 class="text-base font-extrabold tracking-tight truncate">${c.course_name}</h3>
+                </div>
               </div>
 
               <!-- Card Body -->
               <div class="p-5">
-                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">${c.description || 'Comprehensive curriculum with hands-on exercises.'}</p>
+                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">${c.description || 'Comprehensive curriculum with hands-on exercises.'}</p>
                 
-                <div class="grid grid-cols-3 gap-2 py-3 px-3 bg-slate-50 rounded-xl text-center text-xs border border-slate-100">
+                <!-- Metadata Strip -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 mb-3 pb-2 border-b border-slate-100">
+                  <span class="truncate">👤 <strong>${c.instructor_name || 'ArchintX Faculty'}</strong></span>
+                  <span class="font-mono">⏱ ${c.duration_hours || 20}h • Pass: ≥${c.passing_criteria || 60}%</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 py-2.5 px-3 bg-slate-50 rounded-xl text-center text-xs border border-slate-100">
                   <div>
                     <span class="text-slate-400 block text-[10px] uppercase font-bold">Modules</span>
                     <span class="font-extrabold text-slate-800 text-sm font-mono">${c.module_count}</span>
@@ -1001,21 +1102,48 @@
 
     async function handleCreateCourse(e) {
       e.preventDefault();
-      const name = document.getElementById('new-course-name').value;
-      const desc = document.getElementById('new-course-desc').value;
+      const name = document.getElementById('new-course-name').value.trim();
+      const category = document.getElementById('new-course-category').value;
+      const level = document.getElementById('new-course-level').value;
+      const instructor = document.getElementById('new-course-instructor').value.trim();
+      const durationHours = parseInt(document.getElementById('new-course-duration').value) || 20;
+      const passingScore = parseInt(document.getElementById('new-course-passing').value) || 60;
+      const prerequisites = document.getElementById('new-course-prerequisites').value.trim();
+      const desc = document.getElementById('new-course-desc').value.trim();
       const status = document.getElementById('new-course-status').value;
+      const initialMod = document.getElementById('new-course-initial-module').value.trim();
+      const initialLes = document.getElementById('new-course-initial-lesson').value.trim();
+
+      const payload = {
+        course_name: name,
+        category: category,
+        level: level,
+        instructor_name: instructor || 'ArchintX Faculty',
+        duration_hours: durationHours,
+        passing_criteria: passingScore,
+        prerequisites: prerequisites || null,
+        description: desc || null,
+        status: status,
+      };
+
+      if (initialMod) payload.initial_module_name = initialMod;
+      if (initialLes) payload.initial_lesson_title = initialLes;
 
       const res = await fetch('/courses', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({course_name: name, description: desc, status: status})
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
+        const created = await res.json();
         document.getElementById('new-course-modal').classList.add('hidden');
         document.getElementById('create-course-form').reset();
-        showToast('Course published successfully!');
+        showToast(`Course "${created.course_name}" published successfully!`);
         loadCourses();
+      } else {
+        const err = await res.json();
+        alert(err.detail || 'Failed to create course.');
       }
     }
 

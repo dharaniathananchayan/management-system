@@ -60,16 +60,29 @@ class ModuleOut(ModuleBase):
 # --- Course Schemas ---
 class CourseBase(BaseModel):
     course_name: str = Field(..., min_length=2, max_length=150, example="Python Fundamentals")
+    category: Optional[str] = Field("Python & Backend", example="Python & Backend")
+    level: Optional[str] = Field("Beginner", example="Beginner")  # Beginner, Intermediate, Advanced
+    duration_hours: Optional[int] = Field(20, ge=1, le=500, example=24)
+    passing_criteria: Optional[int] = Field(60, ge=40, le=100, example=60)
+    instructor_name: Optional[str] = Field("ArchintX Faculty", example="Sarah Jenkins")
+    prerequisites: Optional[str] = Field(None, example="Basic programming logic")
     description: Optional[str] = Field(None, example="Master the basics of Python programming.")
     status: str = Field("Active", example="Active")  # Active, Draft, Archived
 
 
 class CourseCreate(CourseBase):
-    pass
+    initial_module_name: Optional[str] = Field(None, example="Module 1: Orientation & Setup")
+    initial_lesson_title: Optional[str] = Field(None, example="Lesson 1.1: Environment Setup")
 
 
 class CourseUpdate(BaseModel):
     course_name: Optional[str] = None
+    category: Optional[str] = None
+    level: Optional[str] = None
+    duration_hours: Optional[int] = None
+    passing_criteria: Optional[int] = None
+    instructor_name: Optional[str] = None
+    prerequisites: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
 
