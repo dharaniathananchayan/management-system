@@ -340,10 +340,10 @@
               <input type="text" id="course-search-input" oninput="filterCourses(this.value)" placeholder="Search courses..." class="pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-blue-500 w-48 sm:w-64 transition">
               <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <!-- Enroll Student Form Button -->
+            <!-- Enroll Student Button -->
             <button onclick="openEnrollmentModal()" class="px-4 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/20 transition flex items-center space-x-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-              <span>Enroll Student (Form)</span>
+              <span>Enroll Student</span>
             </button>
             <!-- Create Course Button -->
             <button onclick="document.getElementById('new-course-modal').classList.remove('hidden')" class="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition flex items-center space-x-1.5">
@@ -379,7 +379,7 @@
           </div>
           <div class="flex items-center space-x-3">
             <button onclick="openEnrollmentModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3.5 py-1.5 rounded-xl border border-indigo-200 transition flex items-center space-x-1.5">
-              <span>+ New Enrollment Form</span>
+              <span>+ New Enrollment</span>
             </button>
             <button onclick="loadEnrollmentsLedger()" class="text-xs text-slate-500 hover:text-slate-800 font-medium">
               Refresh ↻
@@ -607,7 +607,7 @@
         <div class="flex items-center space-x-2.5">
           <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">📝</span>
           <div>
-            <h3 class="text-base font-bold text-slate-900">Course Enrollment Form</h3>
+            <h3 class="text-base font-bold text-slate-900">Course Enrollment</h3>
             <p class="text-xs text-slate-500">Requires enrollment_id, student_id, and course_id</p>
           </div>
         </div>
@@ -663,7 +663,7 @@
             Cancel
           </button>
           <button type="submit" class="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/20 transition">
-            Submit Enrollment Form
+            Submit Enrollment
           </button>
         </div>
       </form>
@@ -1204,7 +1204,7 @@
                 </button>
               ` : `
                 <button onclick="openEnrollmentModal(${c.course_id})" class="flex-1 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-1">
-                  <span>Enroll (Form)</span>
+                  <span>Enroll Student</span>
                 </button>
               `}
             </div>
