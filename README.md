@@ -1,93 +1,78 @@
-# ArchintX — Learning Progress & Assessment Management System
-**Advanced Python Development Project Assignment | ArchintX Python Development Team**
+# Learning Progress & Assessment Management System
 
-A production-grade Python backend system built with **FastAPI**, **SQLAlchemy**, **Pydantic**, **Pandas**, and **Plotly** to manage student learning activities, assessments, automated quiz grading, progress tracking, and performance analytics.
-
----
-
-## 🌟 Key Features & Deliverables
-
-- **Student Management Module**:
-  - Secure registration & login with **bcrypt** password hashing and **JWT** (JSON Web Token) authentication.
-  - Student profile updates, enrollments, and permission scopes.
-- **Course & Module Management**:
-  - Full CRUD operations for courses, modules, and lessons.
-  - Course status workflow (`Active`, `Draft`, `Archived`).
-  - Student enrollment tracking and module lesson counts.
-- **Quiz & Assessment Engine**:
-  - Multiple-choice and modular question types.
-  - Timed quizzes with duration countdown.
-  - Automated question evaluation with instant score calculation, percentage grading, and pass/fail determination.
-  - Automatic weak-topic detection and personalized learning recommendations.
-- **Learning Progress Tracking**:
-  - Granular lesson-by-lesson completion logging (`completed` vs. `pending`).
-  - Course completion percentage calculations.
-  - Inactive student detection (flagging accounts with no progress in > 7 days).
-- **Performance Analytics**:
-  - **Pandas**-powered analytics for grade distribution, pass rates, and course averages.
-  - **Plotly** interactive data visualization endpoints (Bar charts for course averages and line charts for activity trends).
-  - Identification of difficult topics based on accuracy percentages.
-- **Interactive UI Dashboard**:
-  - Fully functional web interface served at `/` implementing all 4 mockups from the assignment specification (Student Dashboard, Course Management, Quiz Assessment, Learning Analytics).
-- **Complete Test Suite**:
-  - Comprehensive **Pytest** automated testing suite with 26 unit and integration test cases covering 100% of core flows.
+A production-grade Python full-stack application built with **FastAPI**, **SQLAlchemy**, **Pydantic v2**, **Pandas**, **Plotly**, and **Tailwind CSS**. The platform provides complete student lifecycle management, course curriculum authoring, automated quiz grading, granular lesson progress tracking, and academic performance analytics.
 
 ---
 
-## 🏗️ System Architecture & Technology Stack
+## 📑 Table of Contents
+- [Core Architecture & Capabilities](#-core-architecture--capabilities)
+- [System Architecture](#-system-architecture)
+- [Database Schema & ER Diagram](#-database-schema--er-diagram)
+- [Core Modules Breakdown (Tasks A–F)](#-core-modules-breakdown-tasks-af)
+- [Interactive UI Dashboard](#-interactive-ui-dashboard)
+- [REST API Specification](#-rest-api-specification)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation & Setup](#installation--setup)
+  - [Database Seeding](#database-seeding)
+  - [Running the Server](#running-the-server)
+- [Automated Testing Suite](#-automated-testing-suite)
+- [Project Directory Structure](#-project-directory-structure)
+- [Security & Engineering Best Practices](#-security--engineering-best-practices)
+
+---
+
+## 🌟 Core Architecture & Capabilities
+
+- **Python 3.10+ & FastAPI**: High-throughput asynchronous backend with automatic OpenAPI documentation.
+- **Relational ORM**: SQLAlchemy 2.0 with native support for SQLite, PostgreSQL, and MySQL.
+- **JWT & Cryptographic Security**: Industry-standard `bcrypt` password hashing and stateless HS256 JWT authentication.
+- **Automated Assessment Engine**: Real-time evaluation of student quiz submissions, score calculation, pass/fail grading, and weak topic identification.
+- **Pandas & Plotly Analytics**: Statistical data transformations, course difficulty evaluations, and interactive analytical visualisations.
+- **Modern Responsive UI**: Clean single-page dashboard with dedicated modals for authentication, course authoring, quiz taking, curriculum inspection, and progress reporting.
+
+---
+
+## 🏗️ System Architecture
 
 ```
                           ┌────────────────────────┐
-                          │   Frontend / Client    │
-                          │   (Web Dashboard &     │
-                          │   Swagger / ReDoc UI)  │
+                          │     Web Dashboard      │
+                          │ (HTML5 / Tailwind CSS /│
+                          │   Plotly Analytics)    │
                           └───────────┬────────────┘
-                                      │ HTTP / REST
+                                      │ HTTP / JSON REST
                                       ▼
                           ┌────────────────────────┐
                           │    FastAPI Gateway     │
-                          │   (Pydantic Validation,│
+                          │  (Pydantic Validation, │
                           │   CORS, JWT Security)  │
                           └───────────┬────────────┘
                                       │
          ┌───────────────┬────────────┼───────────────┬────────────────┐
          ▼               ▼            ▼               ▼                ▼
    ┌───────────┐   ┌───────────┐ ┌─────────┐   ┌─────────────┐  ┌─────────────┐
-   │Auth Module│   │Course CRUD│ │Quiz Eng.│   │Progress Svc │  │Analytics Svc│
-   │  (JWT /   │   │  & Lessons│ │(Auto-   │   │(Completion  │  │ (Pandas &   │
-   │  Bcrypt)  │   │           │ │ Grading)│   │ Monitoring) │  │   Plotly)   │
+   │Student Mgt│   │Course CRUD│ │Quiz Eng.│   │Progress Svc │  │Analytics Svc│
+   │ (Auth/JWT/│   │& Learning │ │ (Auto-  │   │ (Completion │  │  (Pandas &  │
+   │ Profiles) │   │ Materials)│ │ Grading)│   │ Monitoring) │  │   Plotly)   │
    └─────┬─────┘   └─────┬─────┘ └────┬────┘   └──────┬──────┘  └──────┬──────┘
          │               │            │               │                │
          └───────────────┴────────────┼───────────────┴────────────────┘
                                       ▼
                           ┌────────────────────────┐
-                          │    SQLAlchemy ORM      │
+                          │    SQLAlchemy 2.0      │
                           │  (Session Management)  │
                           └───────────┬────────────┘
                                       ▼
                           ┌────────────────────────┐
-                          │   Relational Database  │
-                          │  (SQLite / PostgreSQL /│
-                          │        MySQL)          │
+                          │  Relational Database   │
+                          │ (SQLite/Postgres/MySQL)│
                           └────────────────────────┘
 ```
 
-| Technology | Purpose |
-|---|---|
-| **Python 3.10+** | Core programming language & async runtime |
-| **FastAPI** | High-performance async REST API framework |
-| **SQLAlchemy 2.0** | Relational Database ORM and schema modeling |
-| **Pydantic v2** | Request validation, schema enforcement, and serialization |
-| **JWT (PyJWT)** | Stateless bearer token authentication |
-| **Bcrypt** | Industry-standard salt-hashed password storage |
-| **Pandas** | Tabular data analysis and aggregations |
-| **Plotly** | Dynamic chart JSON generation for analytics visualizations |
-| **Pytest** | Automated test suite with isolated test fixtures |
-| **Swagger / OpenAPI** | Interactive API documentation |
-
 ---
 
-## 🗄️ Database Design (Entity-Relationship)
+## 🗄️ Database Schema & ER Diagram
 
 ```mermaid
 erDiagram
@@ -118,6 +103,11 @@ erDiagram
     COURSES {
         int course_id PK
         string course_name
+        string level
+        int duration_hours
+        int passing_criteria
+        string instructor_name
+        string prerequisites
         text description
         string status
         datetime created_at
@@ -202,103 +192,90 @@ erDiagram
 
 ---
 
-## 🚀 Quickstart Guide
+## 🧩 Core Modules Breakdown (Tasks A–F)
 
-### 1. Clone & Set Up Environment
+### A. Student Management Module
+- **Registration & Login**: Secure endpoints with bcrypt password hashing and JWT token issuance.
+- **Profile Management**: Profile retrieval and profile editing (`PUT /students/{id}`).
+- **Course Enrollment**: Enroll students into courses with status tracking (`Active`, `Completed`, `Dropped`).
+- **Interactive UI**:
+  - Modal for registering new students with automatic persona activation.
+  - Dedicated Sign In modal issuing JWT bearer tokens.
+  - Interactive profile editing modal and student switcher.
 
-```bash
-# Clone the repository
-git clone <repository_url>
-cd management-system
+### B. Course Management Module
+- **Curriculum Hierarchy**: Courses contain Modules, which contain Lessons and learning materials.
+- **CRUD Operations**: Create, update, list, and delete courses, modules, and lessons.
+- **Uniform Status Workflow**: Clean course statuses (`Active`, `Draft`, `Archived`) with uniform card presentation.
+- **Interactive UI**:
+  - Modal for authoring courses with duration, level, passing criteria, and prerequisites.
+  - Curriculum inspection modal allowing lesson completion toggles and module additions.
+  - Modal for enrolling learners into existing courses.
 
-# Create and activate virtual environment
-python -m venv venv
-# Windows:
-venv\Scripts\activate
-# Linux/macOS:
-source venv/bin/activate
+### C. Quiz & Assessment Module
+- **Question Engine**: Support for multiple-choice questions (MCQs) and modular question types.
+- **Automated Grading**: Automatic evaluation comparing student answers against answer keys.
+- **Results & History**: Automatic calculation of marks, percentage score, pass/fail status, and weak topic diagnostics.
+- **Interactive UI**:
+  - Live quiz-taking modal with countdown timer, dynamic progress tracking, and clean radio selectors.
+  - Instant score feedback modal displaying percentage, status, and targeted recommendations.
+  - Modal for creating new assessments and adding questions.
 
-# Install dependencies
-pip install -r requirements.txt
-```
+### D. Learning Progress Tracking
+- **Granular Lesson Tracking**: Per-lesson status tracking (`completed` vs. `pending`).
+- **Dynamic Completion Calculations**: Instant calculation of course progress percentages across all enrolled modules.
+- **Inactive Student Detection**: Automated detection of learners with no activity in over 7 days.
+- **Interactive UI**:
+  - Full-featured Student Progress Report modal with printable transcript view (`window.print()`).
+  - Visual completion progress bars across all courses.
+  - Inactive student alert cards with one-click study nudge action.
 
-### 2. Configure Environment Variables
+### E. Performance Analytics
+- **At-Risk Learner Identification**: Automated identification of students with average assessment scores below threshold (default: 60%).
+- **Course Performance Averages**: Aggregation of student scores across all courses using Pandas.
+- **Difficult Topic Discovery**: Topic-level accuracy rate analysis to pinpoint challenging curriculum concepts.
+- **Interactive UI**:
+  - Low-Performing Students table displaying score metrics, completed tests, and intervention actions.
+  - Plotly bar chart displaying average scores by course.
+  - Plotly spline line chart illustrating 7-day student activity trends.
+  - Difficult topics breakdown list with accuracy progress bars.
 
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-By default, the application runs on SQLite (`sqlite:///./archintx.db`) with zero external dependencies required. To run with PostgreSQL or MySQL, update `DATABASE_URL` in `.env`:
-- **PostgreSQL**: `DATABASE_URL=postgresql://user:password@localhost:5432/archintx`
-- **MySQL**: `DATABASE_URL=mysql+pymysql://user:password@localhost:3306/archintx`
-
-### 3. Seed Database with Realistic Data
-
-```bash
-python database/seed_data.py
-```
-This populates:
-- 4 student profiles & 1 instructor profile
-- 4 complete courses matching the specification:
-  - *Python Fundamentals* (8 modules)
-  - *SQL for Beginners* (6 modules)
-  - *API Development* (5 modules)
-  - *Data Analytics* (7 modules)
-- Lesson progress records calibrated to replicate the exact metrics of the assignment mockups
-- Quizzes with 10 multiple-choice questions and assessment historical results
-
-### 4. Run the Application
-
-```bash
-python run.py
-```
-The server will start on `http://127.0.0.1:8000`.
-
-- **Interactive Dashboard (All 4 Mockups)**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-- **Interactive Swagger Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **ReDoc Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+### F. API Integration & Architecture
+- **FastAPI Framework**: High performance async REST APIs with Pydantic v2 data validation.
+- **Error Handling**: Standardized HTTP exceptions and formatted error messages.
+- **Pagination & Filtering**: Query parameters for filtering students, enrollments, and courses.
+- **Auto-Generated Documentation**: Complete OpenAPI 3.0 schema accessible via `/docs` and `/redoc`.
 
 ---
 
-## 🧪 Automated Testing
+## 🎨 Interactive UI Dashboard
 
-Execute the test suite with verbose output:
+The platform includes a modern web dashboard served directly at `/`:
 
-```bash
-pytest -v
-```
-
-All **26 tests** will pass:
-```text
-tests/test_analytics.py::test_course_analytics PASSED
-tests/test_analytics.py::test_platform_dashboard_analytics PASSED
-tests/test_analytics.py::test_inactive_students_endpoint PASSED
-tests/test_analytics.py::test_low_performing_students_endpoint PASSED
-tests/test_analytics.py::test_analytics_charts_endpoint PASSED
-tests/test_assessments.py::test_create_assessment PASSED
-tests/test_assessments.py::test_get_assessment_hides_correct_answers_for_students PASSED
-tests/test_assessments.py::test_submit_assessment_full_score PASSED
-tests/test_assessments.py::test_submit_assessment_failing_identifies_weak_topics PASSED
-tests/test_assessments.py::test_get_student_results_history PASSED
-tests/test_auth.py::test_register_student_success PASSED
-tests/test_auth.py::test_register_student_duplicate_email PASSED
-tests/test_auth.py::test_login_student_success PASSED
-tests/test_auth.py::test_login_student_invalid_credentials PASSED
-tests/test_auth.py::test_get_current_student_me PASSED
-tests/test_auth.py::test_get_student_by_id PASSED
-tests/test_auth.py::test_update_student_profile PASSED
-tests/test_courses.py::test_create_course PASSED
-tests/test_courses.py::test_list_courses PASSED
-tests/test_courses.py::test_get_course_details PASSED
-tests/test_courses.py::test_update_course PASSED
-tests/test_courses.py::test_enroll_student_in_course PASSED
-tests/test_courses.py::test_delete_course PASSED
-tests/test_progress.py::test_mark_lesson_completed PASSED
-tests/test_progress.py::test_student_progress_summary PASSED
-tests/test_progress.py::test_student_progress_list PASSED
-
-====================== 26 passed in 9.20s =======================
-```
+1. **Top Navigation Bar**:
+   - Header identity: `Learning Progress & Assessment Management`
+   - Active student switcher with live profile data binding.
+   - Quick access buttons: **Sign In** (JWT Authentication) and **+ New Student** (Registration).
+2. **Student Dashboard Tab**:
+   - Summary metric cards: Enrolled Courses, Completed Lessons, and Overall Average Score.
+   - Course progress cards with visual percentage bars.
+   - Profile action buttons: **Edit Profile** and **Progress Report**.
+3. **Course Catalog Tab**:
+   - Status filters: `All`, `Active`, `Draft`, `Archived`.
+   - Course cards displaying duration, difficulty level, module count, and enrolled student count.
+   - Action buttons: **Curriculum** (view/manage lessons) and **Enroll Student**.
+   - **+ New Course** creation button with modal workflow.
+4. **Quiz & Assessment Tab**:
+   - Available assessments list with duration, total marks, and passing percentage.
+   - **Take Assessment** interactive modal with real-time countdown timer.
+   - Assessment creation modal to author custom quizzes.
+   - Assessment history table showing past attempts and scores.
+5. **Analytics & Performance Tab**:
+   - Key platform metrics (Active Students, Total Enrollments, Platform Avg Score, Assessments Taken).
+   - Interactive Plotly visualizations (Course Score Averages & Weekly Activity Trend).
+   - Inactive students re-engagement list.
+   - Low-performing students intervention table.
+   - Course-specific difficult topics breakdown.
 
 ---
 
@@ -307,78 +284,231 @@ tests/test_progress.py::test_student_progress_list PASSED
 ### Student Management
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/students/register` | Register new student with bcrypt hashing |
-| `POST` | `/students/login` | Authenticate student and obtain JWT Bearer token |
-| `GET` | `/students/me` | Fetch currently authenticated student profile |
-| `GET` | `/students` | List students (supports pagination & role filter) |
-| `GET` | `/students/{id}` | Get student details |
-| `PUT` | `/students/{id}` | Update student profile |
-| `GET` | `/students/{id}/results` | Get assessment history and answer breakdown |
-| `GET` | `/students/{id}/progress` | Get student progress report (matching Mockup 1) |
+| `POST` | `/students/register` | Register new student profile with bcrypt password hashing |
+| `POST` | `/students/login` | Authenticate student credentials and issue JWT bearer token |
+| `GET` | `/students/me` | Retrieve currently authenticated student profile via JWT |
+| `GET` | `/students` | List students with optional role filter and pagination |
+| `GET` | `/students/{id}` | Get individual student profile |
+| `PUT` | `/students/{id}` | Update student name, email, or role |
+| `GET` | `/students/{id}/results` | Get assessment history and answer breakdown for student |
+| `GET` | `/students/{id}/progress` | Get comprehensive student progress transcript |
 
-### Course Management
+### Course & Curriculum Management
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/courses` | Create new course |
-| `GET` | `/courses` | List courses with module/student counts (Mockup 2) |
-| `GET` | `/courses/{id}` | Get course detail hierarchy (modules & lessons) |
-| `PUT` | `/courses/{id}` | Update course title/status/description |
-| `DELETE` | `/courses/{id}` | Delete course (cascades modules & lessons) |
-| `POST` | `/courses/{id}/enroll` | Enroll a student in a course |
-| `POST` | `/courses/{id}/modules` | Add module to course |
-| `GET` | `/courses/{id}/modules` | List modules for course |
-| `POST` | `/modules/{id}/lessons` | Add lesson to module |
-| `GET` | `/lessons/{id}` | Get lesson details |
+| `POST` | `/courses` | Create new course with curriculum metadata |
+| `GET` | `/courses` | List courses with enrolled student counts and module counts |
+| `GET` | `/courses/{id}` | Get course detail hierarchy including modules and lessons |
+| `PUT` | `/courses/{id}` | Update course title, level, status, or description |
+| `DELETE` | `/courses/{id}` | Delete course (cascades modules and lessons) |
+| `POST` | `/courses/{id}/enroll` | Enroll a student into a course |
+| `POST` | `/courses/{id}/modules` | Add a curriculum module to a course |
+| `GET` | `/courses/{id}/modules` | List modules belonging to a course |
+| `POST` | `/modules/{id}/lessons` | Add a lesson to a module |
+| `GET` | `/lessons/{id}` | Get lesson details and content |
 
 ### Quiz & Assessment Module
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/assessments` | Create assessment quiz |
-| `GET` | `/assessments` | List assessments |
-| `GET` | `/assessments/{id}` | Get assessment questions (hides answer for students) |
-| `POST` | `/assessments/{id}/questions` | Add question to assessment |
-| `POST` | `/assessments/{id}/submit` | Submit answers for automatic evaluation & scoring |
+| `POST` | `/assessments` | Create assessment quiz with time limits and passing criteria |
+| `GET` | `/assessments` | List all available assessments |
+| `GET` | `/assessments/{id}` | Get assessment questions (omits correct answers for test-takers) |
+| `POST` | `/assessments/{id}/questions` | Add a question to an assessment |
+| `POST` | `/assessments/{id}/submit` | Submit student answers for automated evaluation and scoring |
 
-### Progress Tracking & Analytics
+### Progress Tracking & Performance Analytics
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/progress/lessons/{id}` | Update lesson progress (`completed`/`pending`) |
-| `GET` | `/progress/student/{id}` | Get student lesson progress list |
-| `GET` | `/analytics/course/{id}` | Course-level analytics with Pandas |
-| `GET` | `/analytics/dashboard` | Platform metrics & student activity trend |
-| `GET` | `/analytics/inactive-students`| List students with no activity in > 7 days |
-| `GET` | `/analytics/low-performers` | Identify students with scores below threshold |
-| `GET` | `/analytics/charts` | Plotly chart JSON definitions (Mockup 4) |
+| `POST` | `/progress/lessons/{id}` | Update lesson completion status (`completed` or `pending`) |
+| `GET` | `/progress/student/{id}` | Get student lesson progress records |
+| `GET` | `/analytics/course/{id}` | Course-level statistical analysis via Pandas |
+| `GET` | `/analytics/dashboard` | Overall platform KPIs and activity trends |
+| `GET` | `/analytics/inactive-students`| List students with no recorded activity in > 7 days |
+| `GET` | `/analytics/low-performers` | Identify learners with average scores below passing threshold |
+| `GET` | `/analytics/charts` | Plotly JSON chart configurations for dashboard rendering |
 
 ---
 
-## 🎨 UI Mockups Implementation Mapping
+## 🚀 Getting Started
 
-The interactive frontend served at root (`/`) maps directly to the design mockups in the specification:
+### Prerequisites
+- Python 3.10, 3.11, 3.12, 3.13, or 3.14
+- Git
 
-1. **Example 1 — Student Dashboard**:
-   - Welcome message: *"Welcome back, Student"*
-   - 3 metric cards: **Enrolled Courses (4)**, **Completed Lessons (18)**, **Average Score (82%)**
-   - Course progress percentage bars for *Python Fundamentals (78%)*, *SQL Basics (55%)*, and *Web Development (32%)*.
-2. **Example 2 — Course Management**:
-   - Courses table showing **Course Name**, **Modules**, **Students Enrolled**, and **Status Badge** (*Active*, *Draft*).
-   - Dynamic modal for creating new courses.
-3. **Example 3 — Quiz Assessment**:
-   - Quiz assessment header: *"ArchintX | Python Assessment"*
-   - Live timer countdown (`Time left: 12:45`) and progress indicator (`Question 3 of 10`).
-   - Multiple-choice layout: Question text with option cards (e.g. *A. 6, B. 8, C. 9, D. Error*).
-   - Automated submission and grading with instant feedback.
-4. **Example 4 — Learning Analytics**:
-   - **Average assessment score by course** bar chart (*Python: 72%, SQL: 84%, Web: 68%, Data: 91%*).
-   - **Student activity trend** spline line chart (*Mon - Sat*).
-   - Weak topics breakdown and inactive students alert panel.
+### Installation & Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository_url>
+   cd management-system
+   ```
+
+2. **Create and activate a virtual environment**:
+   ```bash
+   # Windows (PowerShell):
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+
+   # Linux / macOS:
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure Environment Variables** (Optional):
+   ```bash
+   cp .env.example .env
+   ```
+   *Default database is SQLite (`sqlite:///./lms.db`). To switch to PostgreSQL or MySQL, update `DATABASE_URL` in `.env`:*
+   - **PostgreSQL**: `DATABASE_URL=postgresql://user:password@localhost:5432/lms`
+   - **MySQL**: `DATABASE_URL=mysql+pymysql://user:password@localhost:3306/lms`
+
+### Database Seeding
+
+Populate the database with realistic courses, curriculum modules, lessons, student profiles, assessments, and progress records:
+
+```bash
+python database/seed_data.py
+```
+
+### Running the Server
+
+Start the application with Uvicorn:
+
+```bash
+python run.py
+```
+
+- **Interactive UI Dashboard**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **Swagger API Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **ReDoc Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ---
 
-## 🔒 Security & Best Practices
+## 🧪 Automated Testing Suite
 
-- **Zero Plain-Text Passwords**: Passwords hashed using `bcrypt` with adaptive salt cost factor.
-- **Strict JWT Token Verification**: Cryptographic HS256 validation with expiration window.
-- **SQL Injection Prevention**: Completely mitigated through parameterized queries via SQLAlchemy ORM.
-- **Input Validation**: Robust Pydantic v2 schemas validating request structures, data types, and bounds.
-- **Graceful Error Handling**: Global exception handler with clean JSON error details.
+The project includes 32 automated tests covering authentication, course management, assessment grading, progress calculation, and analytics logic.
+
+Run the test suite with verbose output:
+
+```bash
+pytest -v
+```
+
+### Test Suite Summary:
+```text
+tests/test_analytics.py::test_course_analytics PASSED                    [  3%]
+tests/test_analytics.py::test_platform_dashboard_analytics PASSED        [  6%]
+tests/test_analytics.py::test_inactive_students_endpoint PASSED          [  9%]
+tests/test_analytics.py::test_low_performing_students_endpoint PASSED    [ 12%]
+tests/test_analytics.py::test_analytics_charts_endpoint PASSED           [ 15%]
+tests/test_assessments.py::test_create_assessment PASSED                 [ 18%]
+tests/test_assessments.py::test_get_assessment_hides_correct_answers_for_students PASSED [ 21%]
+tests/test_assessments.py::test_submit_assessment_full_score PASSED      [ 25%]
+tests/test_assessments.py::test_submit_assessment_failing_identifies_weak_topics PASSED [ 28%]
+tests/test_assessments.py::test_get_student_results_history PASSED       [ 31%]
+tests/test_auth.py::test_register_student_success PASSED                 [ 34%]
+tests/test_auth.py::test_register_student_duplicate_email PASSED         [ 37%]
+tests/test_auth.py::test_login_student_success PASSED                    [ 40%]
+tests/test_auth.py::test_login_student_invalid_credentials PASSED        [ 43%]
+tests/test_auth.py::test_get_current_student_me PASSED                   [ 46%]
+tests/test_auth.py::test_get_student_by_id PASSED                        [ 50%]
+tests/test_auth.py::test_update_student_profile PASSED                   [ 53%]
+tests/test_courses.py::test_create_course PASSED                         [ 56%]
+tests/test_courses.py::test_list_courses PASSED                          [ 59%]
+tests/test_courses.py::test_get_course_details PASSED                    [ 62%]
+tests/test_courses.py::test_update_course PASSED                         [ 65%]
+tests/test_courses.py::test_enroll_student_in_course PASSED              [ 68%]
+tests/test_courses.py::test_delete_course PASSED                         [ 71%]
+tests/test_enrollments.py::test_create_enrollment_with_form_fields PASSED [ 75%]
+tests/test_enrollments.py::test_create_enrollment_auto_generated_id PASSED [ 78%]
+tests/test_enrollments.py::test_create_enrollment_duplicate_fails PASSED [ 81%]
+tests/test_enrollments.py::test_list_and_delete_enrollment PASSED        [ 84%]
+tests/test_main.py::test_root_view_html PASSED                           [ 87%]
+tests/test_main.py::test_health_check PASSED                             [ 90%]
+tests/test_progress.py::test_mark_lesson_completed PASSED                [ 93%]
+tests/test_progress.py::test_student_progress_summary PASSED             [ 96%]
+tests/test_progress.py::test_student_progress_list PASSED                [100%]
+
+====================== 32 passed in 11.23s =======================
+```
+
+---
+
+## 📁 Project Directory Structure
+
+```
+management-system/
+│
+├── app/
+│   ├── config.py                 # Application settings and environment variables
+│   ├── database.py               # SQLAlchemy database engine and session factory
+│   ├── security.py               # Bcrypt password hashing & JWT token encoding/decoding
+│   ├── main.py                   # FastAPI initialization, routing & middleware
+│   │
+│   ├── models/                   # SQLAlchemy ORM database models
+│   │   ├── student.py            # Student user model
+│   │   ├── course.py             # Course, Module & Lesson models
+│   │   ├── enrollment.py         # Course enrollment model
+│   │   ├── assessment.py         # Assessment, Question & StudentAnswer models
+│   │   ├── progress.py           # Lesson completion progress model
+│   │   └── result.py             # Assessment result model
+│   │
+│   ├── schemas/                  # Pydantic v2 validation models
+│   │   ├── student.py            # Student schemas (Create, Login, Out)
+│   │   ├── course.py             # Course & Curriculum schemas
+│   │   ├── enrollment.py         # Enrollment schemas
+│   │   ├── assessment.py         # Assessment & Question schemas
+│   │   ├── progress.py           # Progress schemas
+│   │   └── analytics.py          # Analytics & Chart schemas
+│   │
+│   ├── routers/                  # FastAPI REST API route handlers
+│   │   ├── auth.py               # Student registration & JWT authentication
+│   │   ├── students.py           # Student profile management
+│   │   ├── courses.py            # Course & Module CRUD
+│   │   ├── enrollments.py        # Enrollment management
+│   │   ├── assessments.py        # Quiz creation & auto-grading
+│   │   ├── progress.py           # Lesson completion tracking
+│   │   └── analytics.py          # Pandas aggregations & Plotly charts
+│   │
+│   ├── services/                 # Core domain business logic
+│   │   ├── assessment_service.py # Automated scoring & weak topic identification
+│   │   ├── progress_service.py   # Completion calculation & inactivity detection
+│   │   └── analytics_service.py  # Pandas statistics & Plotly JSON generators
+│   │
+│   └── templates/
+│       └── index.html            # Responsive UI Dashboard with embedded modals & Plotly
+│
+├── database/
+│   ├── schema.sql                # Pure SQL schema definition
+│   └── seed_data.py              # Database seeding script with realistic dummy data
+│
+├── tests/                        # Pytest automated test suite (32 tests)
+│   ├── conftest.py               # In-memory SQLite fixtures & HTTP test client
+│   ├── test_analytics.py         # Analytics & Pandas endpoint tests
+│   ├── test_assessments.py       # Quiz evaluation & scoring tests
+│   ├── test_auth.py              # Registration, JWT & profile tests
+│   ├── test_courses.py           # Course CRUD & module hierarchy tests
+│   ├── test_enrollments.py       # Enrollment management tests
+│   ├── test_main.py              # Root HTML view & health check tests
+│   └── test_progress.py          # Lesson tracking & summary tests
+│
+├── .env.example                  # Environment configuration template
+├── requirements.txt              # Project Python dependencies
+├── run.py                        # Uvicorn server launcher
+└── README.md                     # Project documentation
+```
+
+---
+
+## 🔒 Security & Engineering Best Practices
+
+- **Password Security**: Zero plain-text passwords. All credentials are encrypted using `bcrypt` with adaptive work factor salts.
+- **Stateless Authentication**: JWT tokens signed using HS256 algorithm with configurable expiration window.
+- **SQL Injection Prevention**: Completely mitigated through parameterized queries via SQLAlchemy 2.0 ORM.
+- **Data Validation & Sanitization**: Strict Pydantic v2 schemas validating request payloads, data types, and constraints.
+- **Error Handling**: Graceful exception handling ensuring clean JSON error responses across all endpoints.
