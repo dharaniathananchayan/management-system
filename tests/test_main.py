@@ -1,7 +1,7 @@
 def test_root_view_html(client):
     response = client.get("/")
     assert response.status_code == 200
-    assert "ArchintX" in response.text
+    assert "Learning" in response.text
     assert "Student Dashboard" in response.text
 
 

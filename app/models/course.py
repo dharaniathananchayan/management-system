@@ -13,7 +13,7 @@ class Course(Base):
     level = Column(String(50), default="Beginner", nullable=True)  # Beginner, Intermediate, Advanced
     duration_hours = Column(Integer, default=20, nullable=True)
     passing_criteria = Column(Integer, default=60, nullable=True)
-    instructor_name = Column(String(120), default="ArchintX Faculty", nullable=True)
+    instructor_name = Column(String(120), default="Senior Faculty", nullable=True)
     prerequisites = Column(String(255), nullable=True)
     description = Column(Text, nullable=True)
     status = Column(String(30), default="Active", nullable=False)  # Active, Draft, Archived

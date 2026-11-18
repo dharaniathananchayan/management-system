@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArchintX — Learning Progress & Assessment Platform</title>
+  <title>Learning Progress & Assessment Platform</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Plotly.js CDN -->
@@ -78,11 +78,11 @@
         <div class="flex items-center space-x-4">
           <div class="flex items-center space-x-2.5">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-md shadow-blue-500/20 font-bold text-lg text-white">
-              A
+              L
             </div>
             <div>
               <div class="flex items-center space-x-2">
-                <span class="text-base font-extrabold tracking-tight text-white">Archint<span class="text-blue-400">X</span></span>
+                <span class="text-base font-extrabold tracking-tight text-white">Learning<span class="text-blue-400">Portal</span></span>
               </div>
               <p class="text-[11px] text-slate-400 leading-none mt-0.5 hidden sm:block">Learning Progress & Assessment Management</p>
             </div>
@@ -764,7 +764,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Lead Instructor</label>
-              <input type="text" id="new-course-instructor" placeholder="e.g. Dr. Sarah Jenkins" value="ArchintX Faculty" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+              <input type="text" id="new-course-instructor" placeholder="e.g. Dr. Sarah Jenkins" value="Senior Faculty" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
@@ -911,7 +911,7 @@
         <div class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
-            <input type="email" id="login-student-email" required placeholder="e.g. alex@archintx.org" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-emerald-600">
+            <input type="email" id="login-student-email" required placeholder="e.g. alex.rivera@example.com" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-emerald-600">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Password <span class="text-rose-500">*</span></label>
@@ -951,7 +951,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
-            <input type="email" id="reg-student-email" required placeholder="maya.lin@archintx.org" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
+            <input type="email" id="reg-student-email" required placeholder="e.g. maya.lin@example.com" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-blue-600">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Password <span class="text-rose-500">*</span></label>
@@ -1130,7 +1130,7 @@
   <!-- Footer -->
   <footer class="bg-white border-t border-slate-200 mt-auto py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
-      ArchintX Learning Progress & Assessment Management System • <strong>Task 3</strong>
+      Learning Progress & Assessment Management System • <strong>Task 3</strong>
     </div>
   </footer>
 
@@ -1342,7 +1342,7 @@
                 
                 <!-- Metadata Strip -->
                 <div class="flex items-center justify-between text-[11px] text-slate-500 mb-3 pb-2 border-b border-slate-100">
-                  <span class="truncate">👤 <strong>${c.instructor_name || 'ArchintX Faculty'}</strong></span>
+                  <span class="truncate">👤 <strong>${c.instructor_name || 'Senior Faculty'}</strong></span>
                   <span class="font-mono">⏱ ${c.duration_hours || 20}h • Pass: ≥${c.passing_criteria || 60}%</span>
                 </div>
 
@@ -1416,7 +1416,7 @@
         course_name: name,
         category: category,
         level: level,
-        instructor_name: instructor || 'ArchintX Faculty',
+        instructor_name: instructor || 'Senior Faculty',
         duration_hours: durationHours,
         passing_criteria: passingScore,
         prerequisites: prerequisites || null,
@@ -2204,7 +2204,7 @@
           const data = await res.json();
           document.getElementById('login-student-modal').classList.add('hidden');
           if (data.access_token) {
-            localStorage.setItem('archintx_jwt_token', data.access_token);
+            localStorage.setItem('lms_jwt_token', data.access_token);
           }
           showToast(`Authenticated as ${data.student.name}! JWT token issued.`, '🔐');
           await loadStudentsList();

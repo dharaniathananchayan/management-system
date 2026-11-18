@@ -59,7 +59,7 @@ def seed_database():
         )
         admin = Student(
             name="Instructor Sarah",
-            email="admin@archintx.com",
+            email="admin@example.com",
             password_hash=hash_password("admin123"),
             role="admin",
             is_active=True,
