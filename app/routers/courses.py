@@ -129,15 +129,7 @@ def get_course(course_id: int, db: Session = Depends(get_db)):
         )
     stats_out = _populate_course_stats(course, db)
     return CourseDetailOut(
-        course_id=course.course_id,
-        course_name=course.course_name,
-        description=course.description,
-        status=course.status,
-        created_at=course.created_at,
-        updated_at=course.updated_at,
-        module_count=stats_out.module_count,
-        student_count=stats_out.student_count,
-        lesson_count=stats_out.lesson_count,
+        **stats_out.model_dump(),
         modules=course.modules,
     )
 
