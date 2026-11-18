@@ -4,7 +4,16 @@ A production-grade Python full-stack application built with **FastAPI**, **SQLAl
 
 ---
 
+## 🌐 Live Deployment & Interactive Links
+
+- **Live Application UI**: [https://management-system-2lwh.onrender.com](https://management-system-2lwh.onrender.com)
+- **Interactive Swagger API Docs**: [https://management-system-2lwh.onrender.com/docs](https://management-system-2lwh.onrender.com/docs)
+- **ReDoc API Documentation**: [https://management-system-2lwh.onrender.com/redoc](https://management-system-2lwh.onrender.com/redoc)
+
+---
+
 ## 📑 Table of Contents
+- [Live Deployment Links](#-live-deployment--interactive-links)
 - [Core Architecture & Capabilities](#-core-architecture--capabilities)
 - [System Architecture](#-system-architecture)
 - [Database Schema & ER Diagram](#-database-schema--er-diagram)
@@ -383,6 +392,12 @@ Start the application with Uvicorn:
 python run.py
 ```
 
+#### 🌐 Production Live URLs
+- **Live UI Dashboard**: [https://management-system-2lwh.onrender.com](https://management-system-2lwh.onrender.com)
+- **Swagger Documentation**: [https://management-system-2lwh.onrender.com/docs](https://management-system-2lwh.onrender.com/docs)
+- **ReDoc Documentation**: [https://management-system-2lwh.onrender.com/redoc](https://management-system-2lwh.onrender.com/redoc)
+
+#### 💻 Local Development URLs
 - **Interactive UI Dashboard**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 - **Swagger API Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **ReDoc Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
